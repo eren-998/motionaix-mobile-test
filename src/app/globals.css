@@ -1,0 +1,375 @@
+@import "tailwindcss";
+
+:root {
+  /* Light Mode (Biscuit Theme) */
+  --background: #F5F0E6;
+  --foreground: #1A1C1C;
+  
+  /* Theme mapping */
+  --color-surface-container-lowest: #FFFFFF;
+  --color-inverse-surface: #1A1C1C;
+  --color-surface-container-highest: #DCD5C6;
+  --color-surface-container-high: #E2DCCF;
+  --color-outline: #B0ABA1;
+  --color-on-primary-fixed-variant: #564500;
+  --color-on-tertiary-fixed-variant: #454747;
+  --color-inverse-on-surface: #F5F0E6;
+  --color-on-tertiary-fixed: #1a1c1c;
+  --color-error: #BA1A1A;
+  --color-secondary-container: #FFE07F; /* Darker yellow for contrast */
+  --color-primary-container: #FFD100;
+  --color-background: #F5F0E6;
+  --color-on-secondary-fixed-variant: #4e4800;
+  --color-on-error: #FFFFFF;
+  --color-on-surface: #1A1C1C;
+  --color-on-tertiary: #FFFFFF;
+  --color-outline-variant: #CCC7BC;
+  --color-primary-fixed-dim: #edc200;
+  --color-on-primary: #000000;
+  --color-surface-variant: #E8DFD0;
+  --color-on-background: #1A1C1C;
+  --color-tertiary-container: #d5d6d6;
+  --color-inverse-primary: #FFD100;
+  --color-on-primary-fixed: #231b00;
+  --color-surface-container: #E8DFD0;
+  --color-surface-container-low: #EFE8DB;
+  --color-surface-dim: #D4CDBC;
+  --color-surface-bright: #F5F0E6;
+  --color-primary-fixed: #ffe07f;
+  --color-on-surface-variant: #4A4C4C;
+  --color-on-error-container: #410002;
+  --color-on-secondary-fixed: #1f1c00;
+  --color-surface-tint: #edc200;
+  --color-on-tertiary-container: #001F23;
+  --color-tertiary-fixed: #e2e2e2;
+  --color-secondary-fixed-dim: #d9c900;
+  --color-on-secondary-container: #221B00;
+  --color-tertiary-fixed-dim: #c6c6c7;
+  --color-tertiary: #4A6366;
+  --color-error-container: #FFDAD6;
+  --color-on-secondary: #FFFFFF;
+  --color-secondary-fixed: #f7e628;
+  --color-surface: #F5F0E6;
+  --color-secondary: #6A5F00;
+  --color-primary: #6F5A00;
+  --color-on-primary-container: #221B00;
+}
+
+.dark {
+  /* Dark Mode (Liquid Glass) */
+  --background: #171309;
+  --foreground: #ebe2cf;
+  
+  --color-surface-container-lowest: #110e05;
+  --color-inverse-surface: #ebe2cf;
+  --color-surface-container-highest: #393428;
+  --color-surface-container-high: #2e2a1e;
+  --color-outline: #9a9077;
+  --color-on-primary-fixed-variant: #564500;
+  --color-on-tertiary-fixed-variant: #454747;
+  --color-inverse-on-surface: #353024;
+  --color-on-tertiary-fixed: #1a1c1c;
+  --color-error: #ffb4ab;
+  --color-secondary-container: #e2d200;
+  --color-primary-container: #ffd100;
+  --color-background: #171309;
+  --color-on-secondary-fixed-variant: #4e4800;
+  --color-on-error: #690005;
+  --color-on-surface: #ebe2cf;
+  --color-on-tertiary: #2f3131;
+  --color-outline-variant: #4d4632;
+  --color-primary-fixed-dim: #edc200;
+  --color-on-primary: #3c2f00;
+  --color-surface-variant: #393428;
+  --color-on-background: #ebe2cf;
+  --color-tertiary-container: #d5d6d6;
+  --color-inverse-primary: #725c00;
+  --color-on-primary-fixed: #231b00;
+  --color-surface-container: #231f14;
+  --color-surface-container-low: #1f1b10;
+  --color-surface-dim: #171309;
+  --color-surface-bright: #3e392c;
+  --color-primary-fixed: #ffe07f;
+  --color-on-surface-variant: #d1c6ab;
+  --color-on-error-container: #ffdad6;
+  --color-on-secondary-fixed: #1f1c00;
+  --color-surface-tint: #edc200;
+  --color-on-tertiary-container: #5b5d5d;
+  --color-tertiary-fixed: #e2e2e2;
+  --color-secondary-fixed-dim: #d9c900;
+  --color-on-secondary-container: #615900;
+  --color-tertiary-fixed-dim: #c6c6c7;
+  --color-tertiary: #f2f2f2;
+  --color-error-container: #93000a;
+  --color-on-secondary: #363100;
+  --color-secondary-fixed: #f7e628;
+  --color-surface: #171309;
+  --color-secondary: #ffee3c;
+  --color-primary: #fff1ce;
+  --color-on-primary-container: #6f5a00;
+}
+
+@theme inline {
+  --color-surface-container-lowest: var(--color-surface-container-lowest);
+  --color-inverse-surface: var(--color-inverse-surface);
+  --color-surface-container-highest: var(--color-surface-container-highest);
+  --color-surface-container-high: var(--color-surface-container-high);
+  --color-outline: var(--color-outline);
+  --color-on-primary-fixed-variant: var(--color-on-primary-fixed-variant);
+  --color-on-tertiary-fixed-variant: var(--color-on-tertiary-fixed-variant);
+  --color-inverse-on-surface: var(--color-inverse-on-surface);
+  --color-on-tertiary-fixed: var(--color-on-tertiary-fixed);
+  --color-error: var(--color-error);
+  --color-secondary-container: var(--color-secondary-container);
+  --color-primary-container: var(--color-primary-container);
+  --color-background: var(--color-background);
+  --color-on-secondary-fixed-variant: var(--color-on-secondary-fixed-variant);
+  --color-on-error: var(--color-on-error);
+  --color-on-surface: var(--color-on-surface);
+  --color-on-tertiary: var(--color-on-tertiary);
+  --color-outline-variant: var(--color-outline-variant);
+  --color-primary-fixed-dim: var(--color-primary-fixed-dim);
+  --color-on-primary: var(--color-on-primary);
+  --color-surface-variant: var(--color-surface-variant);
+  --color-on-background: var(--color-on-background);
+  --color-tertiary-container: var(--color-tertiary-container);
+  --color-inverse-primary: var(--color-inverse-primary);
+  --color-on-primary-fixed: var(--color-on-primary-fixed);
+  --color-surface-container: var(--color-surface-container);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-surface-dim: var(--color-surface-dim);
+  --color-surface-bright: var(--color-surface-bright);
+  --color-primary-fixed: var(--color-primary-fixed);
+  --color-on-surface-variant: var(--color-on-surface-variant);
+  --color-on-error-container: var(--color-on-error-container);
+  --color-on-secondary-fixed: var(--color-on-secondary-fixed);
+  --color-surface-tint: var(--color-surface-tint);
+  --color-on-tertiary-container: var(--color-on-tertiary-container);
+  --color-tertiary-fixed: var(--color-tertiary-fixed);
+  --color-secondary-fixed-dim: var(--color-secondary-fixed-dim);
+  --color-on-secondary-container: var(--color-on-secondary-container);
+  --color-tertiary-fixed-dim: var(--color-tertiary-fixed-dim);
+  --color-tertiary: var(--color-tertiary);
+  --color-error-container: var(--color-error-container);
+  --color-on-secondary: var(--color-on-secondary);
+  --color-secondary-fixed: var(--color-secondary-fixed);
+  --color-surface: var(--color-surface);
+  --color-secondary: var(--color-secondary);
+  --color-primary: var(--color-primary);
+  --color-on-primary-container: var(--color-on-primary-container);
+
+  --spacing-margin-lg: 64px;
+  --spacing-margin-md: 32px;
+  --spacing-margin-sm: 16px;
+  --spacing-unit-4: 8px;
+  --spacing-gutter: 24px;
+  --spacing-container-padding: 40px;
+
+  --font-display: var(--font-sora), sans-serif;
+  --font-headline: var(--font-sora), sans-serif;
+  --font-body: var(--font-hanken-grotesk), sans-serif;
+  --font-label: var(--font-jetbrains-mono), monospace;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+    background-color: rgba(255, 255, 255, 0.4); /* Light mode base */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-panel {
+    background-color: rgba(23, 19, 9, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-panel-glow {
+    border: 1px solid rgba(255, 209, 0, 0.4);
+    box-shadow: inset 0 0 10px rgba(255, 209, 0, 0.1);
+}
+
+.dark .glass-panel-glow {
+    border: 1px solid rgba(255, 238, 50, 0.2);
+    box-shadow: inset 0 0 10px rgba(255, 209, 0, 0.1);
+}
+
+.glass-panel-hover:hover {
+    border-color: rgba(255, 209, 0, 0.5);
+    box-shadow: inset 0 0 10px rgba(255, 209, 0, 0.1);
+}
+
+.dark .glass-panel-hover:hover {
+    border-color: rgba(255, 238, 50, 0.2);
+    box-shadow: inset 0 0 10px rgba(255, 209, 0, 0.1);
+}
+
+.btn-primary {
+    background-color: var(--color-primary-container);
+    color: #000;
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    box-shadow: 0 0 15px rgba(255, 209, 0, 0.4);
+}
+.dark .btn-primary:hover {
+    box-shadow: 0 0 15px rgba(255, 238, 50, 0.6);
+}
+
+.waveform-bar {
+    width: 4px;
+    border-radius: 2px;
+    background-color: var(--color-surface-variant);
+}
+.waveform-bar.active {
+    background-color: var(--color-primary-container);
+}
+
+/* Premium Liquid Glass Effects (2026 standard) */
+.liquid-glass-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.liquid-glass-btn, .liquid-glass-card {
+  position: relative;
+  width: 420px;
+  height: 280px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  border-radius: 92px;
+  background: rgba(255, 255, 255, 0);
+  
+  /* Liquid Glass Core Lens Effect & Frost */
+  backdrop-filter: blur(1px) url(#apple-liquid-glass) blur(2px) saturate(1.5) brightness(1.1);
+  -webkit-backdrop-filter: blur(8px) saturate(1.8) brightness(1.15) contrast(1.05);
+  
+  /* Multi-layered Apple Style Inset Shadows for 3D Depth */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.5),
+    inset 0 0 12px rgba(255, 255, 255, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.25);
+
+  /* Smooth Transitions for Interactive Feedback */
+  transition: 
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark .liquid-glass-btn, .dark .liquid-glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px) saturate(1.8) brightness(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8) brightness(1.1);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.25),
+    inset 0 0 12px rgba(255, 255, 255, 0.1),
+    0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.liquid-glass-btn {
+  border-radius: 92px;
+}
+
+.liquid-glass-card {
+  border-radius: 32px;
+  cursor: default;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+/* Subtle Diagonal Light reflection overlay */
+.glass-specular-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 60%);
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+/* Apple Style Smooth Hover State */
+.liquid-glass-btn:hover, .liquid-glass-card.interactive:hover {
+  transform: scale(1.02) translateY(-2px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    inset 2px 2px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 18px rgba(255, 255, 255, 0.3),
+    0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+.dark .liquid-glass-btn:hover, .dark .liquid-glass-card.interactive:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    inset 2px 2px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 18px rgba(255, 255, 255, 0.3),
+    0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+/* Premium Click Feedback (Active State) */
+.liquid-glass-btn:active, .liquid-glass-card.interactive:active {
+  transform: scale(0.98) translateY(1px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 0 10px rgba(255, 255, 255, 0.15),
+    0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dark .liquid-glass-btn:active, .dark .liquid-glass-card.interactive:active {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 0 10px rgba(255, 255, 255, 0.15),
+    0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Typography Styles (San Francisco / Sora Vibe) */
+.glass-btn-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-hanken-grotesk), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--on-surface);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  user-select: none;
+  text-align: center;
+  z-index: 2;
+}
+
+.glass-btn-title {
+  font-family: var(--font-sora), sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+
+.glass-btn-subtitle {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+  font-weight: 400;
+  letter-spacing: -0.1px;
+}
+
+.dark .glass-btn-content {
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark .glass-btn-subtitle {
+  color: rgba(255, 255, 255, 0.65);
+}
