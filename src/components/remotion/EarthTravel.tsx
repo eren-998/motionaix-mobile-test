@@ -403,12 +403,8 @@ export const EarthTravel: React.FC<EarthTravelProps> = ({
   const frame = useCurrentFrame();
   const { fps, width, height, durationInFrames } = useVideoConfig();
 
-  /* ── Interactive city selector (works in Studio preview) ── */
-  const [selOrigin, setSelOrigin] = useState(origin);
-  const [selDest, setSelDest] = useState(destination);
-
-  const originCity = CITIES.find((c) => c.id === selOrigin) || CITIES[0];
-  const destCity = CITIES.find((c) => c.id === selDest) || CITIES[4];
+  const originCity = CITIES.find((c) => c.id === origin) || CITIES[0];
+  const destCity = CITIES.find((c) => c.id === destination) || CITIES[4];
 
   /* ── Earth texture — start with sync fallback, upgrade async ── */
   const [earthTexture, setEarthTexture] = useState<THREE.CanvasTexture | null>(null);
@@ -483,12 +479,6 @@ export const EarthTravel: React.FC<EarthTravelProps> = ({
     [0, 1, 1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
-  const selectorOp = interpolate(
-    totalProgress,
-    [0.0, 0.04, 0.93, 0.97],
-    [0, 1, 1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
-  );
   const exitOp = interpolate(totalProgress, [0.95, 1.0], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -511,99 +501,7 @@ export const EarthTravel: React.FC<EarthTravelProps> = ({
         />
       </ThreeCanvas>
 
-      {/* ── Top Selector Bar ── */}
-      <div
-        style={{
-          position: "absolute",
-          top: 20,
-          left: "50%",
-          transform: "translateX(-50%)",
-          opacity: selectorOp,
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          background: "rgba(255,255,255,0.92)",
-          backdropFilter: "blur(20px)",
-          padding: "8px 16px",
-          borderRadius: 14,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
-          fontFamily: font,
-          zIndex: 20,
-        }}
-      >
-        {/* Origin select */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              backgroundColor: "#dc2626",
-              flexShrink: 0,
-            }}
-          />
-          <select
-            value={selOrigin}
-            onChange={(e) => setSelOrigin(e.target.value)}
-            style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: 8,
-              padding: "6px 10px",
-              fontSize: 13,
-              fontWeight: 700,
-              color: "#0f172a",
-              background: "white",
-              cursor: "pointer",
-              outline: "none",
-              fontFamily: font,
-            }}
-          >
-            {CITIES.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
 
-        {/* Arrow */}
-        <span style={{ fontSize: 16, color: "#94a3b8", fontWeight: 700 }}>→</span>
-
-        {/* Destination select */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              backgroundColor: "#2563eb",
-              flexShrink: 0,
-            }}
-          />
-          <select
-            value={selDest}
-            onChange={(e) => setSelDest(e.target.value)}
-            style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: 8,
-              padding: "6px 10px",
-              fontSize: 13,
-              fontWeight: 700,
-              color: "#0f172a",
-              background: "white",
-              cursor: "pointer",
-              outline: "none",
-              fontFamily: font,
-            }}
-          >
-            {CITIES.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
 
       {/* ── Origin City Label ── */}
       <div

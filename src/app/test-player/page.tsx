@@ -11,6 +11,10 @@ export default function TestPlayerPage() {
   const [renderProgress, setRenderProgress] = useState(0);
   const [renderTime, setRenderTime] = useState<number | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  
+  // Custom Render Settings
+  const [fps, setFps] = useState<number>(30);
+  const [resolution, setResolution] = useState<string>("720p"); // "720p" | "1080p" | "1440p"
 
   const playerRef = useRef<PlayerRef>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -29,6 +33,22 @@ export default function TestPlayerPage() {
       </div>
     );
   }
+
+  // Get dimensions dynamically based on selected quality
+  const getResolutionDims = (res: string) => {
+    switch (res) {
+      case "1080p":
+        return { width: 1920, height: 1080 };
+      case "1440p":
+        return { width: 2560, height: 1440 };
+      case "720p":
+      default:
+        return { width: 1280, height: 720 };
+    }
+  };
+
+  const { width: compWidth, height: compHeight } = getResolutionDims(resolution);
+  const durationInFrames = 10 * fps; // 10 second animation
 
   // Client-Side Video Export using Canvas Stream & MediaRecorder
   const startCSRRender = async () => {
@@ -51,10 +71,7 @@ export default function TestPlayerPage() {
     setVideoUrl(null);
     const startTime = performance.now();
 
-    const fps = 30;
-    const durationFrames = 300; // 10 seconds
-
-    // Capture canvas stream
+    // Capture canvas stream (independent of display refresh rate)
     const stream = canvas.captureStream(fps);
     
     // Choose WebM video format (supported on Chrome/Firefox/Android, fallback for iOS)
@@ -89,12 +106,17 @@ export default function TestPlayerPage() {
     // Start recording
     mediaRecorder.start();
 
+    // Adjust render delay based on quality to ensure mobile GPU completely draws each frame
+    let frameDelay = 80; // default for 720p
+    if (resolution === "1080p") frameDelay = 160;
+    if (resolution === "1440p") frameDelay = 320;
+
     // Step through each frame sequentially to record perfect frames
-    for (let frame = 0; frame < durationFrames; frame++) {
+    for (let frame = 0; frame < durationInFrames; frame++) {
       player.seekTo(frame);
-      setRenderProgress(Math.round((frame / durationFrames) * 100));
-      // Give the browser GPU time to render the frame
-      await new Promise((resolve) => setTimeout(resolve, 60));
+      setRenderProgress(Math.round((frame / durationInFrames) * 100));
+      // Give the browser GPU time to completely finish rendering the 3D scene
+      await new Promise((resolve) => setTimeout(resolve, frameDelay));
     }
 
     // Finish recording
@@ -127,10 +149,10 @@ export default function TestPlayerPage() {
               origin: origin,
               destination: destination,
             }}
-            durationInFrames={300}
-            fps={30}
-            compositionWidth={1280} // Optimized preview/render resolution for mobile performance
-            compositionHeight={720}
+            durationInFrames={durationInFrames}
+            fps={fps}
+            compositionWidth={compWidth}
+            compositionHeight={compHeight}
             style={{
               width: "100%",
               height: "100%",
@@ -144,10 +166,43 @@ export default function TestPlayerPage() {
               <div className="w-16 h-16 border-4 border-slate-700 border-t-blue-500 rounded-full animate-spin"></div>
               <div className="text-center">
                 <p className="font-bold text-lg">Compiling Video on Mobile Device...</p>
+                <p className="text-slate-400 text-sm mt-1">Resolution: {resolution} | FPS: {fps}</p>
                 <p className="text-blue-400 font-bold text-xl mt-1">{renderProgress}%</p>
               </div>
             </div>
           )}
+        </div>
+
+        {/* Custom Export Configuration */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/30 p-4 rounded-xl border border-slate-800/40 text-sm">
+          {/* Resolution Selector */}
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Video Quality (Resolution):</span>
+            <select
+              value={resolution}
+              onChange={(e) => setResolution(e.target.value)}
+              disabled={rendering}
+              className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white font-bold cursor-pointer disabled:opacity-50"
+            >
+              <option value="720p">720p (Fast)</option>
+              <option value="1080p">1080p (Full HD - Recommended)</option>
+              <option value="1440p">1440p (2K - High Quality)</option>
+            </select>
+          </div>
+
+          {/* FPS Selector */}
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Frame Rate (FPS):</span>
+            <select
+              value={fps}
+              onChange={(e) => setFps(Number(e.target.value))}
+              disabled={rendering}
+              className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white font-bold cursor-pointer disabled:opacity-50"
+            >
+              <option value={30}>30 FPS (Standard)</option>
+              <option value={60}>60 FPS (Super Smooth)</option>
+            </select>
+          </div>
         </div>
 
         {/* Action Controls */}
@@ -192,7 +247,7 @@ export default function TestPlayerPage() {
               <button
                 onClick={startCSRRender}
                 disabled={rendering}
-                className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-blue-600/20 text-sm"
+                className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-blue-600/20 text-sm animate-pulse"
               >
                 {rendering ? "Rendering..." : "⚡ Render WebM on Mobile"}
               </button>
@@ -200,7 +255,7 @@ export default function TestPlayerPage() {
               {videoUrl && (
                 <a
                   href={videoUrl}
-                  download={`flight_${origin}_to_${destination}.webm`}
+                  download={`flight_${origin}_to_${destination}_${resolution}_${fps}fps.webm`}
                   className="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-3.5 px-6 rounded-xl text-center transition-all shadow-lg shadow-green-600/20 text-sm flex items-center justify-center"
                 >
                   📥 Download Video
