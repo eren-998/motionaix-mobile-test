@@ -53,9 +53,6 @@ export async function POST(req: Request) {
       codec: "h264",
       outputLocation,
       inputProps,
-      fps: Number(fps),
-      compositionWidth: compWidth,
-      compositionHeight: compHeight,
     });
 
     console.log("Render complete!");
