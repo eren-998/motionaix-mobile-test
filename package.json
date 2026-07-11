@@ -13,9 +13,11 @@
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "@react-three/fiber": "9.6.1",
+    "@remotion/bundler": "^4.0.488",
     "@remotion/cli": "^4.0.486",
     "@remotion/google-fonts": "^4.0.486",
     "@remotion/player": "^4.0.486",
+    "@remotion/renderer": "^4.0.488",
     "@remotion/three": "4.0.486",
     "@types/three": "0.185.1",
     "clsx": "^2.1.1",

@@ -489,7 +489,7 @@ export const EarthTravel: React.FC<EarthTravelProps> = ({
   return (
     <AbsoluteFill style={{ backgroundColor: "#020813" }}>
       {/* ── 3D Globe ── */}
-      <ThreeCanvas width={width} height={height}>
+      <ThreeCanvas width={width} height={height} gl={{ preserveDrawingBuffer: true }}>
         <EarthScene
           startVec={startVec}
           endVec={endVec}

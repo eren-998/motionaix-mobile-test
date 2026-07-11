@@ -270,20 +270,52 @@ export default function TestPlayerPage() {
           {/* Render and Export Actions */}
           <div className="flex flex-col justify-center gap-3">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Compile Video</span>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col gap-3">
               <button
                 onClick={startCSRRender}
                 disabled={rendering}
-                className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-blue-600/20 text-sm animate-pulse"
+                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-blue-600/20 text-sm"
               >
-                {rendering ? "Rendering..." : "⚡ Render WebM on Mobile"}
+                {rendering ? "Rendering Client-Side..." : "⚡ Render in Browser (Client-Side)"}
+              </button>
+
+              <button
+                onClick={async () => {
+                  setRendering(true);
+                  setVideoUrl(null);
+                  try {
+                    const res = await fetch("/api/render", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ origin, destination, fps, resolution }),
+                    });
+                    
+                    if (!res.ok) {
+                      const err = await res.json();
+                      alert(err.error || "Failed to render on server");
+                      setRendering(false);
+                      return;
+                    }
+                    
+                    const blob = await res.blob();
+                    const url = URL.createObjectURL(blob);
+                    setVideoUrl(url);
+                  } catch (e: any) {
+                    alert("Error: " + e.message);
+                  }
+                  setRendering(false);
+                }}
+                disabled={rendering}
+                className="w-full bg-purple-600 hover:bg-purple-500 disabled:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-purple-600/20 text-sm animate-pulse"
+              >
+                {rendering ? "Rendering..." : "☁️ True Remotion Render (Server-Side)"}
               </button>
               
               {videoUrl && (
                 <a
                   href={videoUrl}
-                  download={`flight_${origin}_to_${destination}_${resolution}_${fps}fps.webm`}
-                  className="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-3.5 px-6 rounded-xl text-center transition-all shadow-lg shadow-green-600/20 text-sm flex items-center justify-center"
+                  download={`flight_${origin}_to_${destination}_${resolution}_${fps}fps.mp4`}
+                  className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3.5 px-6 rounded-xl text-center transition-all shadow-lg shadow-green-600/20 text-sm flex items-center justify-center"
                 >
                   📥 Download Video
                 </a>
@@ -295,9 +327,16 @@ export default function TestPlayerPage() {
         {/* Results / Diagnostics */}
         {renderTime !== null && (
           <div className="bg-blue-950/20 border border-blue-900/30 p-4 rounded-xl text-center text-sm">
-            🎉 Video rendered in <span className="font-bold text-blue-400">{renderTime} seconds</span> directly on this device!
+            🎉 Client-Side Video rendered in <span className="font-bold text-blue-400">{renderTime} seconds</span> directly on this device!
           </div>
         )}
+        
+        <div className="bg-slate-900/50 border border-red-900/30 p-4 rounded-xl text-xs text-slate-400 text-left space-y-2 mt-4">
+          <p className="font-bold text-slate-300">⚠️ Limitations on Mobile & Vercel:</p>
+          <p><strong>Browser Render:</strong> Mobile browsers often discard WebGL buffers or lack full WebCodecs support, resulting in 23KB black videos. This is a hardware/browser limit.</p>
+          <p><strong>True Remotion Render:</strong> This runs exactly like the Remotion Studio Dashboard using Headless Chrome. <strong>However, it will FAIL on Vercel</strong> because standard Vercel serverless functions have a 50MB size limit (Chromium is 150MB+) and time out after 10s.</p>
+          <p><strong>Solution:</strong> To test "True Remotion" smoothly, run `npm run dev` on your PC, then open your PC's local IP (e.g., `http://192.168.1.5:3000`) on your mobile browser and click the Purple button!</p>
+        </div>
 
       </div>
     </div>
