@@ -50,7 +50,7 @@ export default function TestPlayerPage() {
   const { width: compWidth, height: compHeight } = getResolutionDims(resolution);
   const durationInFrames = 10 * fps; // 10 second animation
 
-  // Client-Side Video Export using Canvas Stream & MediaRecorder
+  // Client-Side Video Export using WebCodecs & webm-muxer
   const startCSRRender = async () => {
     if (!playerRef.current) return;
     const player = playerRef.current;
@@ -66,61 +66,88 @@ export default function TestPlayerPage() {
       return;
     }
 
+    // Verify WebCodecs support
+    if (!window.VideoEncoder) {
+      alert("Your browser does not support WebCodecs (VideoEncoder). Please use Chrome, Edge, or a modern Android browser.");
+      return;
+    }
+
     setRendering(true);
     setRenderProgress(0);
     setVideoUrl(null);
     const startTime = performance.now();
 
-    // Capture canvas stream (independent of display refresh rate)
-    const stream = canvas.captureStream(fps);
-    
-    // Choose WebM video format (supported on Chrome/Firefox/Android, fallback for iOS)
-    let options = { mimeType: "video/webm;codecs=vp9" };
-    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-      options = { mimeType: "video/webm;codecs=vp8" };
-    }
-    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-      options = { mimeType: "video/webm" };
-    }
-    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-      options = { mimeType: "" }; // Fallback to default
-    }
+    try {
+      // Dynamically import webm-muxer so it only loads on client
+      const { Muxer, ArrayBufferTarget } = await import("webm-muxer");
 
-    const recordedChunks: BlobPart[] = [];
-    const mediaRecorder = new MediaRecorder(stream, options);
+      const muxer = new Muxer({
+        target: new ArrayBufferTarget(),
+        video: {
+          codec: "V_VP9",
+          width: compWidth,
+          height: compHeight,
+          frameRate: fps,
+        },
+      });
 
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        recordedChunks.push(event.data);
+      const videoEncoder = new VideoEncoder({
+        output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+        error: (e) => console.error("VideoEncoder error:", e),
+      });
+
+      // We use VP9 for WebM
+      videoEncoder.configure({
+        codec: "vp09.00.10.08",
+        width: compWidth,
+        height: compHeight,
+        bitrate: 5_000_000, // 5 Mbps
+      });
+
+      // Let the browser settle initially
+      await new Promise((r) => setTimeout(r, 500));
+
+      for (let f = 0; f < durationInFrames; f++) {
+        // Seek to the exact frame
+        player.seekTo(f);
+        
+        // Wait for Remotion/ThreeJS to finish rendering this frame.
+        // We use requestAnimationFrame nested to ensure the GPU draw is done.
+        await new Promise((resolve) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(resolve);
+          });
+        });
+        
+        // On mobile, if we still have blank frames, add a tiny explicit delay
+        await new Promise((r) => setTimeout(r, 30));
+
+        // Capture frame with absolute timestamp in microseconds
+        const timestamp = (f * 1000000) / fps;
+        const videoFrame = new VideoFrame(canvas, { timestamp });
+
+        // Encode and flush frame immediately to keep memory usage low
+        videoEncoder.encode(videoFrame);
+        videoFrame.close();
+
+        setRenderProgress(Math.round((f / durationInFrames) * 100));
       }
-    };
 
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(recordedChunks, { type: "video/webm" });
+      await videoEncoder.flush();
+      muxer.finalize();
+
+      const buffer = muxer.target.buffer;
+      const blob = new Blob([buffer], { type: "video/webm" });
       const url = URL.createObjectURL(blob);
+
       setVideoUrl(url);
-      setRendering(false);
       setRenderTime(Math.round((performance.now() - startTime) / 1000));
-    };
-
-    // Start recording
-    mediaRecorder.start();
-
-    // Adjust render delay based on quality to ensure mobile GPU completely draws each frame
-    let frameDelay = 80; // default for 720p
-    if (resolution === "1080p") frameDelay = 160;
-    if (resolution === "1440p") frameDelay = 320;
-
-    // Step through each frame sequentially to record perfect frames
-    for (let frame = 0; frame < durationInFrames; frame++) {
-      player.seekTo(frame);
-      setRenderProgress(Math.round((frame / durationInFrames) * 100));
-      // Give the browser GPU time to completely finish rendering the 3D scene
-      await new Promise((resolve) => setTimeout(resolve, frameDelay));
+    } catch (err) {
+      console.error("Rendering failed:", err);
+      alert("An error occurred during rendering.");
+    } finally {
+      setRendering(false);
     }
-
-    // Finish recording
-    mediaRecorder.stop();
   };
 
   return (
