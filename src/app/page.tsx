@@ -150,7 +150,7 @@ export default function Home() {
             <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
             <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">3D Flight Map Generator</h3>
             <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
-              Create an animated 3D flight path between two cities. Select your origin and destination below, choose the duration, and render the video instantly—entirely inside your browser using our powerful Client-Side Rendering engine.
+              Create an animated 3D flight path between two cities. Select your origin and destination below, choose the duration, and preview your video instantly.
             </p>
           </div>
           <div className="w-full md:w-1/2">
