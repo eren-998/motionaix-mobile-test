@@ -7,7 +7,7 @@ import fs from "fs";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { origin, destination, fps = 30, resolution = "720p" } = body;
+    const { origin, destination, fps = 30, resolution = "720p", templateId } = body;
     
     // Serverless limitations check: Vercel standard free tier cannot run Puppeteer or render longer than 10s.
     if (process.env.VERCEL) {
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       compHeight = 1080;
     }
 
-    const compositionId = "EarthTravel"; 
+    const compositionId = templateId || "EarthTravel"; 
     const entry = path.resolve(process.cwd(), "src/remotion/index.ts");
     
     console.log("Bundling video via Webpack...");
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     const outDir = path.join(os.tmpdir(), "motionaix-renders");
     if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
     
-    const outputLocation = path.join(outDir, `flight_${origin}_to_${destination}_${Date.now()}.mp4`);
+    const outputLocation = path.join(outDir, `${compositionId}_${Date.now()}.mp4`);
 
     console.log("Rendering media with headless Chrome...");
     await renderMedia({
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     return new Response(fileBuffer, {
       headers: {
         "Content-Type": "video/mp4",
-        "Content-Disposition": `attachment; filename="flight_${origin}_to_${destination}.mp4"`
+        "Content-Disposition": `attachment; filename="${compositionId}.mp4"`
       }
     });
     

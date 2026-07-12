@@ -1,10 +1,25 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Player, PlayerRef } from "@remotion/player";
 import { EarthTravel, CITIES } from "@/components/remotion/EarthTravel";
+import { GalaxySwarm } from "@/components/remotion/GalaxySwarm";
+import { CyberCity } from "@/components/remotion/CyberCity";
+import { OceanWave } from "@/components/remotion/OceanWave";
+import { FractalTunnel } from "@/components/remotion/FractalTunnel";
+import { MeteorShower } from "@/components/remotion/MeteorShower";
+
+const TEMPLATES = [
+  { id: "EarthTravel", name: "Earth Flight (Map)", component: EarthTravel, hasInputs: true },
+  { id: "GalaxySwarm", name: "Galaxy Swarm (Heavy Particles)", component: GalaxySwarm, hasInputs: false },
+  { id: "CyberCity", name: "Cyber City (Heavy Geometry)", component: CyberCity, hasInputs: false },
+  { id: "OceanWave", name: "Ocean Waves (Heavy Shaders)", component: OceanWave, hasInputs: false },
+  { id: "FractalTunnel", name: "Fractal Tunnel (Heavy Lighting)", component: FractalTunnel, hasInputs: false },
+  { id: "MeteorShower", name: "Meteor Shower (Heavy Instancing)", component: MeteorShower, hasInputs: false },
+];
 
 export default function TestPlayerPage() {
+  const [selectedTemplate, setSelectedTemplate] = useState("EarthTravel");
   const [origin, setOrigin] = useState("mumbai");
   const [destination, setDestination] = useState("tokyo");
   const [rendering, setRendering] = useState(false);
@@ -19,7 +34,9 @@ export default function TestPlayerPage() {
   const playerRef = useRef<PlayerRef>(null);
   const [isMounted, setIsMounted] = useState(false);
 
-  React.useEffect(() => {
+  const activeTemplate = TEMPLATES.find(t => t.id === selectedTemplate) || TEMPLATES[0];
+
+  useEffect(() => {
     setIsMounted(true);
   }, []);
 
@@ -171,11 +188,12 @@ export default function TestPlayerPage() {
         <div className="w-full aspect-video rounded-2xl overflow-hidden border border-slate-700 bg-black shadow-lg relative">
           <Player
             ref={playerRef}
-            component={EarthTravel}
-            inputProps={{
-              origin: origin,
-              destination: destination,
-            }}
+            component={activeTemplate.component as any}
+            inputProps={
+              activeTemplate.hasInputs
+                ? { origin, destination }
+                : {}
+            }
             durationInFrames={durationInFrames}
             fps={fps}
             compositionWidth={compWidth}
@@ -232,39 +250,60 @@ export default function TestPlayerPage() {
           </div>
         </div>
 
-        {/* Action Controls */}
+          {/* Action Controls */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-950/50 p-6 rounded-2xl border border-slate-800/60">
           
-          {/* Location Selectors */}
-          <div className="flex flex-col gap-3 justify-center">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Route</span>
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-5 justify-center">
+            {/* Template Selector */}
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Heavy Scene</span>
               <select
-                value={origin}
-                onChange={(e) => setOrigin(e.target.value)}
+                value={selectedTemplate}
+                onChange={(e) => setSelectedTemplate(e.target.value)}
                 disabled={rendering}
                 className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white font-bold focus:outline-none focus:border-blue-500 cursor-pointer disabled:opacity-50"
               >
-                {CITIES.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    From: {c.name}
-                  </option>
-                ))}
-              </select>
-              <span className="text-slate-500">➔</span>
-              <select
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-                disabled={rendering}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white font-bold focus:outline-none focus:border-blue-500 cursor-pointer disabled:opacity-50"
-              >
-                {CITIES.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    To: {c.name}
+                {TEMPLATES.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
                   </option>
                 ))}
               </select>
             </div>
+
+            {/* Location Selectors (Only for Earth Travel) */}
+            {activeTemplate.hasInputs && (
+              <div className="flex flex-col gap-2">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Route</span>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={origin}
+                    onChange={(e) => setOrigin(e.target.value)}
+                    disabled={rendering}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-bold focus:outline-none focus:border-blue-500 cursor-pointer disabled:opacity-50"
+                  >
+                    {CITIES.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-slate-500">➔</span>
+                  <select
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                    disabled={rendering}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-bold focus:outline-none focus:border-blue-500 cursor-pointer disabled:opacity-50"
+                  >
+                    {CITIES.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Render and Export Actions */}
@@ -287,7 +326,13 @@ export default function TestPlayerPage() {
                     const res = await fetch("/api/render", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ origin, destination, fps, resolution }),
+                      body: JSON.stringify({ 
+                        origin, 
+                        destination, 
+                        fps, 
+                        resolution,
+                        templateId: selectedTemplate 
+                      }),
                     });
                     
                     if (!res.ok) {
@@ -314,7 +359,7 @@ export default function TestPlayerPage() {
               {videoUrl && (
                 <a
                   href={videoUrl}
-                  download={`flight_${origin}_to_${destination}_${resolution}_${fps}fps.mp4`}
+                  download={`${selectedTemplate}_${resolution}_${fps}fps.mp4`}
                   className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3.5 px-6 rounded-xl text-center transition-all shadow-lg shadow-green-600/20 text-sm flex items-center justify-center"
                 >
                   📥 Download Video
