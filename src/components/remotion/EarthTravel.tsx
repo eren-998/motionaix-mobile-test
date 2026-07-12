@@ -5,8 +5,6 @@ import {
   interpolate,
   Easing,
   AbsoluteFill,
-  continueRender,
-  delayRender,
 } from "remotion";
 import { ThreeCanvas } from "@remotion/three";
 import { useThree } from "@react-three/fiber";
@@ -137,7 +135,7 @@ function createFallbackTexture(): THREE.CanvasTexture | null {
 interface GeoJSONFeature {
   geometry: {
     type: string;
-    coordinates: any[];
+    coordinates: unknown[];
   };
 }
 

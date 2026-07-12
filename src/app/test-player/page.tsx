@@ -20,6 +20,7 @@ export default function TestPlayerPage() {
   const [isMounted, setIsMounted] = useState(false);
 
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
 
@@ -112,7 +113,7 @@ export default function TestPlayerPage() {
         player.seekTo(f);
         
         // Wait for Remotion/ThreeJS to finish rendering this frame.
-        // We use requestAnimationFrame nested to ensure the GPU draw is done.
+        // We provide &quot;templates&quot; that represent the UI, and you construct the final clip. That&apos;s it.
         await new Promise((resolve) => {
           requestAnimationFrame(() => {
             requestAnimationFrame(resolve);
@@ -303,7 +304,7 @@ export default function TestPlayerPage() {
           <p className="font-bold text-slate-300">⚠️ Limitations on Mobile & Vercel:</p>
           <p><strong>Browser Render:</strong> Mobile browsers often discard WebGL buffers or lack full WebCodecs support, resulting in 23KB black videos. This is a hardware/browser limit.</p>
           <p><strong>True Remotion Render:</strong> This runs exactly like the Remotion Studio Dashboard using Headless Chrome. <strong>However, it will FAIL on Vercel</strong> because standard Vercel serverless functions have a 50MB size limit (Chromium is 150MB+) and time out after 10s.</p>
-          <p><strong>Solution:</strong> To test "True Remotion" smoothly, run `npm run dev` on your PC, then open your PC's local IP (e.g., `http://192.168.1.5:3000`) on your mobile browser and click the Purple button!</p>
+          <p><strong>Solution:</strong> To test &quot;True Remotion&quot; smoothly, run `npm run dev` on your PC, then open your PC&apos;s local IP (e.g., `http://192.168.1.5:3000`) on your mobile browser and click the Purple button!</p>
         </div>
 
       </div>

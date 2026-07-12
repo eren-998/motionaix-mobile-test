@@ -48,7 +48,7 @@ export default function Editor() {
                 <div 
                   key={i}
                   className={`w-full rounded-t-[1px] ${i < 33 ? 'bg-primary-container opacity-80' : 'bg-white/20'}`}
-                  style={{ height: `${Math.random() * 80 + 10}%` }}
+                  style={{ height: `${Math.abs(Math.sin(i)) * 80 + 10}%` }}
                 />
               ))}
             </div>

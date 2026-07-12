@@ -1,24 +1,21 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { Play, RotateCcw, Bell, BellRing, ChevronDown, User, Upload, X, ThumbsUp } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Play, Pause, Bell, BellRing, ChevronDown, User, Upload, X, ThumbsUp } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+
+const TOTAL_DURATION = 5000; // 5 seconds per loop
 
 export default function SubscribeDemo() {
   const [channelName, setChannelName] = useState("Motionaix");
   const [handle, setHandle] = useState("@motionaix");
   const [subCount, setSubCount] = useState("1.2M subscribers");
   const [logoImage, setLogoImage] = useState<string | null>(null);
-  const [totalDuration, setTotalDuration] = useState(5);
 
-  const [animStage, setAnimStage] = useState(0);
-  const [showSparkles, setShowSparkles] = useState(false);
-  const timelineRef = useRef<NodeJS.Timeout[]>([]);
-
-  const clearTimeline = () => {
-    timelineRef.current.forEach(clearTimeout);
-    timelineRef.current = [];
-  };
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [elapsedMs, setElapsedMs] = useState(0);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -28,70 +25,77 @@ export default function SubscribeDemo() {
     }
   };
 
-  const playAnimation = () => {
-    clearTimeline();
-    setAnimStage(0);
-    setShowSparkles(false);
-
-    const totalMs = totalDuration * 1000;
-    const tIntro = 0;
-    const tMoveToLike = totalMs * 0.10;
-    const tClickLike = totalMs * 0.22;
-    const tMoveToSub = totalMs * 0.35;
-    const tClickSub = totalMs * 0.48;
-    const tMoveToBell = totalMs * 0.60;
-    const tClickBell = totalMs * 0.72;
-    const tExitMouse = totalMs * 0.85;
-    const tCardOutro = totalMs * 0.95;
-
-    setAnimStage(1);
-
-    timelineRef.current.push(setTimeout(() => setAnimStage(2), tMoveToLike));
-    timelineRef.current.push(setTimeout(() => setAnimStage(3), tClickLike));
-    
-    timelineRef.current.push(setTimeout(() => setAnimStage(4), tMoveToSub));
-    timelineRef.current.push(setTimeout(() => {
-      setAnimStage(5);
-      setShowSparkles(true);
-    }, tClickSub));
-    timelineRef.current.push(setTimeout(() => setShowSparkles(false), tClickSub + 600));
-
-    timelineRef.current.push(setTimeout(() => setAnimStage(6), tMoveToBell));
-    timelineRef.current.push(setTimeout(() => setAnimStage(7), tClickBell));
-
-    timelineRef.current.push(setTimeout(() => setAnimStage(8), tExitMouse));
-    timelineRef.current.push(setTimeout(() => setAnimStage(9), tCardOutro));
-    timelineRef.current.push(setTimeout(() => setAnimStage(0), totalMs));
-  };
-
-  const resetAnimation = () => {
-    clearTimeline();
-    setAnimStage(0);
-    setShowSparkles(false);
-  };
-
   useEffect(() => {
-    return () => clearTimeline();
-  }, []);
+    if (!isPlaying) return;
+
+    let requestRef: number;
+    let lastTime = 0;
+
+    const animate = (timestamp: number) => {
+      if (!lastTime) lastTime = timestamp;
+      const delta = timestamp - lastTime;
+      lastTime = timestamp;
+
+      setElapsedMs((prev) => {
+        const next = prev + delta;
+        if (next >= TOTAL_DURATION) {
+          setProgress(0);
+          return 0; // Loop back
+        }
+        setProgress(next / TOTAL_DURATION);
+        return next;
+      });
+
+      requestRef = requestAnimationFrame(animate);
+    };
+
+    requestRef = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(requestRef);
+  }, [isPlaying]);
+
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  // Determine animStage based on elapsed time
+  let animStage = 0;
+  const tMoveToLike = TOTAL_DURATION * 0.10;
+  const tClickLike = TOTAL_DURATION * 0.22;
+  const tMoveToSub = TOTAL_DURATION * 0.35;
+  const tClickSub = TOTAL_DURATION * 0.48;
+  const tMoveToBell = TOTAL_DURATION * 0.60;
+  const tClickBell = TOTAL_DURATION * 0.72;
+  const tExitMouse = TOTAL_DURATION * 0.85;
+  const tCardOutro = TOTAL_DURATION * 0.95;
+
+  if (elapsedMs > 0 && elapsedMs < tMoveToLike) animStage = 1;
+  else if (elapsedMs >= tMoveToLike && elapsedMs < tClickLike) animStage = 2;
+  else if (elapsedMs >= tClickLike && elapsedMs < tMoveToSub) animStage = 3;
+  else if (elapsedMs >= tMoveToSub && elapsedMs < tClickSub) animStage = 4;
+  else if (elapsedMs >= tClickSub && elapsedMs < tMoveToBell) animStage = 5;
+  else if (elapsedMs >= tMoveToBell && elapsedMs < tClickBell) animStage = 6;
+  else if (elapsedMs >= tClickBell && elapsedMs < tExitMouse) animStage = 7;
+  else if (elapsedMs >= tExitMouse && elapsedMs < tCardOutro) animStage = 8;
+  else if (elapsedMs >= tCardOutro) animStage = 9;
 
   const getMouseTransitionDuration = () => {
     if ([3, 5, 7].includes(animStage)) return "0.08s";
-    const proportionalSpeed = (totalDuration * 1000) * 0.12;
+    const proportionalSpeed = TOTAL_DURATION * 0.12;
     const travelSpeedSeconds = Math.min(600, proportionalSpeed) / 1000;
     return `${travelSpeedSeconds}s`;
   };
 
   const getMousePosition = () => {
-    // We calibrate coordinates relative to the banner center
     switch (animStage) {
       case 0: return { x: 200, y: 150, opacity: 0, scale: 1 };
       case 1: return { x: 200, y: 150, opacity: 0, scale: 1 };
-      case 2: return { x: -45, y: 18, opacity: 1, scale: 1 };     // Like Button
-      case 3: return { x: -45, y: 18, opacity: 1, scale: 0.8 };   // Like Click
-      case 4: return { x: 45, y: 18, opacity: 1, scale: 1 };      // Sub Button
-      case 5: return { x: 45, y: 18, opacity: 1, scale: 0.8 };    // Sub Click
-      case 6: return { x: 130, y: 18, opacity: 1, scale: 1 };     // Bell
-      case 7: return { x: 130, y: 18, opacity: 1, scale: 0.8 };   // Bell Click
+      case 2: return { x: 18, y: 18, opacity: 1, scale: 1 };     // Like Button
+      case 3: return { x: 18, y: 18, opacity: 1, scale: 0.8 };   // Like Click
+      case 4: return { x: 91, y: 18, opacity: 1, scale: 1 };      // Sub Button
+      case 5: return { x: 91, y: 18, opacity: 1, scale: 0.8 };    // Sub Click
+      case 6: return { x: 160, y: 18, opacity: 1, scale: 1 };     // Bell
+      case 7: return { x: 160, y: 18, opacity: 1, scale: 0.8 };   // Bell Click
       case 8: return { x: 200, y: 150, opacity: 0, scale: 1 };    // Exit
       case 9: return { x: 200, y: 150, opacity: 0, scale: 1 };
       default: return { x: 200, y: 150, opacity: 0, scale: 1 };
@@ -129,7 +133,10 @@ export default function SubscribeDemo() {
       `}} />
 
       {/* Preview Canvas */}
-      <div className="w-full aspect-video rounded-2xl overflow-hidden border border-white/20 bg-black shadow-2xl relative flex items-center justify-center">
+      <div 
+        className="w-full aspect-video rounded-2xl overflow-hidden border border-white/20 bg-black shadow-2xl relative flex items-center justify-center cursor-pointer group"
+        onClick={togglePlay}
+      >
         {/* Background Gradients */}
         <div className="absolute inset-0 opacity-40 pointer-events-none">
           <div className="absolute top-[20%] left-[20%] w-64 h-64 bg-primary-container rounded-full mix-blend-screen filter blur-[100px] animate-[pulse_8s_ease-in-out_infinite]" />
@@ -138,16 +145,20 @@ export default function SubscribeDemo() {
 
         {/* Lower Third Banner */}
         <div 
-          className={`relative flex items-center gap-4 bg-white/10 backdrop-blur-xl px-5 py-3 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/20 opacity-0
+          className={`relative flex items-center gap-4 bg-white/10 backdrop-blur-xl px-5 py-3 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/20 opacity-0 z-10
             ${isCardVisible ? 'anim-in' : ''}
             ${animStage === 9 ? 'anim-out' : ''}
           `}
-          style={{ transition: 'opacity 0.2s ease-in-out', transform: 'scale(1.2)' }}
+          style={{ 
+            transition: 'opacity 0.2s ease-in-out', 
+            transform: 'scale(1.2)',
+            animationPlayState: isPlaying ? "running" : "paused" 
+          }}
         >
           {/* Avatar */}
           <div className="w-11 h-11 rounded-full bg-white/20 overflow-hidden flex items-center justify-center shrink-0 border border-white/10 shadow-inner">
             {logoImage ? (
-              <img src={logoImage} alt="Avatar" className="w-full h-full object-cover" />
+              <Image src={logoImage} alt="Avatar" width={44} height={44} className="w-full h-full object-cover" unoptimized />
             ) : (
               <User size={22} className="text-white/70" />
             )}
@@ -199,7 +210,7 @@ export default function SubscribeDemo() {
               `}
             >
               {isBellRinging ? (
-                <BellRing size={16} className="anim-bell" fill="currentColor" />
+                <BellRing size={16} className="anim-bell" fill="currentColor" style={{ animationPlayState: isPlaying ? "running" : "paused" }} />
               ) : (
                 <Bell size={16} />
               )}
@@ -220,6 +231,18 @@ export default function SubscribeDemo() {
             </div>
           </div>
         </div>
+
+        {/* Pause/Play Overlay */}
+        <div className={`absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-200 ${isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
+          <div className="w-14 h-14 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/20">
+            {isPlaying ? <Pause size={24} className="text-white" /> : <Play size={24} className="text-white ml-1" />}
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-30">
+          <div className="h-full bg-primary-container transition-none" style={{ width: `${progress * 100}%` }} />
+        </div>
       </div>
 
       {/* Controls Container */}
@@ -231,7 +254,7 @@ export default function SubscribeDemo() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-black/40 overflow-hidden flex items-center justify-center shrink-0 border border-white/10">
               {logoImage ? (
-                <img src={logoImage} alt="Logo" className="w-full h-full object-cover" />
+                <Image src={logoImage} alt="Logo" width={40} height={40} className="w-full h-full object-cover" unoptimized />
               ) : (
                 <User size={18} className="text-white/50" />
               )}
@@ -271,23 +294,6 @@ export default function SubscribeDemo() {
               className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary-container outline-none"
             />
           </div>
-        </div>
-
-        {/* Playback Controls */}
-        <div className="flex gap-2 mt-2">
-          <button 
-            onClick={playAnimation}
-            className="flex-1 flex items-center justify-center gap-2 bg-on-surface text-background py-3 rounded-xl font-bold text-sm hover:bg-primary-container hover:text-on-primary-container transition-all shadow-lg active:scale-95"
-          >
-            <Play size={16} fill="currentColor" /> Preview Animation
-          </button>
-          <button 
-            onClick={resetAnimation}
-            className="p-3 bg-black/40 text-white rounded-xl hover:bg-white/10 transition-colors border border-white/10 active:scale-95"
-            title="Reset"
-          >
-            <RotateCcw size={16} />
-          </button>
         </div>
 
         <Link

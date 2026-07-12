@@ -2,7 +2,7 @@ export default function Templates() {
   const categories = ["All", "Motion Graphics", "Text Animation", "VFX", "Transitions"];
   
   // Empty state since user will design their own features
-  const templates: any[] = []; 
+  const templates: unknown[] = []; 
 
   return (
     <div className="w-full max-w-screen-2xl mx-auto px-16 py-16 flex flex-col gap-10">

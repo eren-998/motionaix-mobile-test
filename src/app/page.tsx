@@ -147,43 +147,52 @@ export default function Home() {
         </motion.div>
 
         {/* 1 — Earth Travel Map Demo */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8 }} className="flex flex-col md:flex-row gap-12 md:gap-16 items-start mb-28">
-          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-8 backdrop-blur-sm w-full md:w-1/2">
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8 }} className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-center mb-20">
+          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border-2 border-primary-container p-8 md:p-10 backdrop-blur-sm w-full lg:max-w-md justify-center shadow-[0_0_30px_rgba(255,200,0,0.1)]">
             <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
-            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">3D Flight Map Generator</h3>
-            <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
-              Create an animated 3D flight path between two cities. Select your origin and destination below, choose the duration, and preview your video instantly.
-            </p>
+            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">3D Flight Map</h3>
+            <ul className="font-body text-sm md:text-base text-on-surface-variant leading-relaxed space-y-2 border-l-2 border-primary-container/30 pl-4">
+              <li>Animated 3D flight path between any two cities</li>
+              <li>Pick origin, destination, and video length</li>
+              <li>Preview instantly, export as video</li>
+              <li>Transparent background for easy layering</li>
+            </ul>
           </div>
-          <div className="w-full md:w-1/2">
+          <div className="w-full flex-1">
             <EarthTravelDemo />
           </div>
         </motion.div>
 
         {/* 2 — Subscribe & Like Animation Demo */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8 }} className="flex flex-col md:flex-row gap-12 md:gap-16 items-start mb-28">
-          <div className="flex flex-col gap-5 md:order-2 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-8 backdrop-blur-sm w-full md:w-1/2">
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8 }} className="flex flex-col lg:flex-row-reverse gap-10 lg:gap-14 items-center mb-20">
+          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border-2 border-primary-container p-8 md:p-10 backdrop-blur-sm w-full lg:max-w-md justify-center shadow-[0_0_30px_rgba(255,200,0,0.1)]">
             <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
             <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">YouTube Lower Thirds</h3>
-            <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
-              A premium, perfectly timed &quot;Like, Subscribe &amp; Bell&quot; animation for your videos. Upload your channel logo, enter your handle, and generate an alpha-transparent WebM to drop right into Premiere or CapCut.
-            </p>
+            <ul className="font-body text-sm md:text-base text-on-surface-variant leading-relaxed space-y-2 border-l-2 border-primary-container/30 pl-4">
+              <li>Animated Like, Subscribe, and Bell sequence</li>
+              <li>Upload your channel logo and customize text</li>
+              <li>Smooth cursor movement with click effects</li>
+              <li>Alpha-transparent output for Premiere or CapCut</li>
+            </ul>
           </div>
-          <div className="w-full md:w-1/2 md:order-1">
+          <div className="w-full flex-1">
             <SubscribeDemo />
           </div>
         </motion.div>
 
         {/* 3 — iOS Notification Graphic Demo */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8 }} className="flex flex-col md:flex-row gap-12 md:gap-16 items-start mb-28">
-          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-8 backdrop-blur-sm w-full md:w-1/2">
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8 }} className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-center mb-20">
+          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border-2 border-primary-container p-8 md:p-10 backdrop-blur-sm w-full lg:max-w-md justify-center shadow-[0_0_30px_rgba(255,200,0,0.1)]">
             <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
-            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">Apple iOS Notification</h3>
-            <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
-              Recreate the exact look, feel, and physics of a real iPhone notification sliding down from the top of the screen. Features authentic liquid glass backdrop filtering. Just edit the text, pick the app icon, and export.
-            </p>
+            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">iOS Notification</h3>
+            <ul className="font-body text-sm md:text-base text-on-surface-variant leading-relaxed space-y-2 border-l-2 border-primary-container/30 pl-4">
+              <li>Realistic iPhone notification drop-in animation</li>
+              <li>Built-in app icons: WhatsApp, Instagram, Gmail, and more</li>
+              <li>Upload your own app icon or use presets</li>
+              <li>Edit title, message, and time text</li>
+            </ul>
           </div>
-          <div className="w-full md:w-1/2">
+          <div className="w-full flex-1">
             <IosNotificationDemo />
           </div>
         </motion.div>

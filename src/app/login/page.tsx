@@ -74,7 +74,7 @@ export default function Login() {
 
               <div className="mt-8 text-center">
                 <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary-container transition-colors">
-                  Don't have an account? Request access.
+                  Don&apos;t have an account? Request access.
                 </a>
               </div>
             </div>
