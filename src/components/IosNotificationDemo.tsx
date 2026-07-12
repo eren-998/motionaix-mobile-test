@@ -4,7 +4,15 @@ import React, { useState, useEffect } from "react";
 import { Play, RotateCcw, Pause, User, Upload, X, Clock, Settings, Bell } from "lucide-react";
 import Link from "next/link";
 
-const PRESETS: Record<string, any> = {
+interface Preset {
+  name: string;
+  title: string;
+  message: string;
+  bg: string;
+  icon: React.ReactNode;
+}
+
+const PRESETS: Record<string, Preset> = {
   messages: {
     name: "Messages",
     title: "Sarah Jenkins",
@@ -66,7 +74,7 @@ export default function IosNotificationDemo() {
   };
 
   useEffect(() => {
-    let intervalId: any;
+    let intervalId: NodeJS.Timeout;
     if (animState === "playing") {
       intervalId = setInterval(() => {
         setElapsedMs((prev) => {

@@ -5,7 +5,6 @@ import {
   useVideoConfig,
   interpolate,
   Easing,
-  Sequence,
   AbsoluteFill,
 } from "remotion";
 

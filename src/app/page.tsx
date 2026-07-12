@@ -166,7 +166,7 @@ export default function Home() {
             <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
             <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">YouTube Lower Thirds</h3>
             <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
-              A premium, perfectly timed "Like, Subscribe & Bell" animation for your videos. Upload your channel logo, enter your handle, and generate an alpha-transparent WebM to drop right into Premiere or CapCut.
+              A premium, perfectly timed &quot;Like, Subscribe &amp; Bell&quot; animation for your videos. Upload your channel logo, enter your handle, and generate an alpha-transparent WebM to drop right into Premiere or CapCut.
             </p>
           </div>
           <div className="w-full md:w-1/2 md:order-1">

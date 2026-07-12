@@ -44,7 +44,7 @@ export default function WaveformTool() {
                       key={i} 
                       className="flex-1 rounded-t-sm transition-all duration-75"
                       style={{ 
-                        height: isPlaying ? `${Math.random() * 80 + 10}%` : '10px',
+                        height: isPlaying ? `${Math.abs(Math.sin(i * 0.5) * 80) + 10}%` : '10px',
                         backgroundColor: '#FFD100',
                         boxShadow: '0 0 10px rgba(255,209,0,0.5)'
                       }} 

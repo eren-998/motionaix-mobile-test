@@ -134,7 +134,18 @@ function createFallbackTexture(): THREE.CanvasTexture | null {
   return tex;
 }
 
-function createGeoTexture(geojsonData: any): THREE.CanvasTexture | null {
+interface GeoJSONFeature {
+  geometry: {
+    type: string;
+    coordinates: any[];
+  };
+}
+
+interface GeoJSONData {
+  features: GeoJSONFeature[];
+}
+
+function createGeoTexture(geojsonData: GeoJSONData): THREE.CanvasTexture | null {
   if (typeof document === "undefined") return null;
   const c = document.createElement("canvas");
   c.width = 4096;
@@ -162,7 +173,7 @@ function createGeoTexture(geojsonData: any): THREE.CanvasTexture | null {
   ctx.lineWidth = 1.5;
   ctx.lineJoin = "round";
 
-  geojsonData.features.forEach((f: any) => {
+  geojsonData.features.forEach((f: GeoJSONFeature) => {
     const g = f.geometry;
     if (g.type === "Polygon") g.coordinates.forEach(drawPoly);
     else if (g.type === "MultiPolygon")
@@ -271,7 +282,9 @@ const Airplane: React.FC<{
 }> = ({ position, lookTarget }) => {
   const ref = useRef<THREE.Group>(null);
   // orient every render
-  if (ref.current) ref.current.lookAt(lookTarget);
+  useEffect(() => {
+    if (ref.current) ref.current.lookAt(lookTarget);
+  });
 
   return (
     <group ref={ref} position={position}>
@@ -401,22 +414,16 @@ export const EarthTravel: React.FC<EarthTravelProps> = ({
   destination = "tokyo",
 }) => {
   const frame = useCurrentFrame();
-  const { fps, width, height, durationInFrames } = useVideoConfig();
+  const { width, height, durationInFrames } = useVideoConfig();
 
   const originCity = CITIES.find((c) => c.id === origin) || CITIES[0];
   const destCity = CITIES.find((c) => c.id === destination) || CITIES[4];
 
   /* ── Earth texture — start with sync fallback, upgrade async ── */
-  const [earthTexture, setEarthTexture] = useState<THREE.CanvasTexture | null>(null);
+  const [earthTexture, setEarthTexture] = useState<THREE.CanvasTexture | null>(() => createFallbackTexture());
 
   useEffect(() => {
     let cancelled = false;
-
-    // Load fallback texture on mount
-    const fb = createFallbackTexture();
-    if (fb) {
-      setEarthTexture(fb);
-    }
 
     fetch(
       "https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json"
