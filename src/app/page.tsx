@@ -126,9 +126,14 @@ export default function Home() {
             Edit ready-made motion graphics templates, auto-generate styled captions, and turn any voiceover into a synced waveform video — all inside your browser, no software to install.
           </p>
 
-          <Link href="/login" className="w-[300px] h-[88px]">
-            <LiquidGlassCard className="!w-full !h-full !rounded-[44px]" title="Get Started Free" subtitle="No Software Needed" isButton />
-          </Link>
+          <div className="flex gap-4">
+            <Link href="/login" className="w-[200px] h-[88px]">
+              <LiquidGlassCard className="!w-full !h-full !rounded-[44px]" title="Get Started Free" subtitle="No Software Needed" isButton />
+            </Link>
+            <Link href="/test-player" className="w-[200px] h-[88px]">
+              <LiquidGlassCard className="!w-full !h-full !rounded-[44px] !bg-blue-600" title="Open Test Player" subtitle="Test Heavy 3D Videos" isButton />
+            </Link>
+          </div>
         </motion.div>
       </section>
 
