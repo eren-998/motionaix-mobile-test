@@ -4,6 +4,8 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import LiquidGlassCard from "@/components/LiquidGlassCard";
 import EarthTravelDemo from "@/components/EarthTravelDemo";
+import SubscribeDemo from "@/components/SubscribeDemo";
+import IosNotificationDemo from "@/components/IosNotificationDemo";
 
 /* ───────────────────────── Animated Background Waves ───────────────────────── */
 const GlassWave = ({ delay, yOffset, opacity, duration }: { delay: number; yOffset: string; opacity: number; duration: number }) => (
@@ -155,6 +157,34 @@ export default function Home() {
           </div>
           <div className="w-full md:w-1/2">
             <EarthTravelDemo />
+          </div>
+        </motion.div>
+
+        {/* 2 — Subscribe & Like Animation Demo */}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8 }} className="flex flex-col md:flex-row gap-12 md:gap-16 items-start mb-28">
+          <div className="flex flex-col gap-5 md:order-2 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-8 backdrop-blur-sm w-full md:w-1/2">
+            <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
+            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">YouTube Lower Thirds</h3>
+            <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
+              A premium, perfectly timed "Like, Subscribe & Bell" animation for your videos. Upload your channel logo, enter your handle, and generate an alpha-transparent WebM to drop right into Premiere or CapCut.
+            </p>
+          </div>
+          <div className="w-full md:w-1/2 md:order-1">
+            <SubscribeDemo />
+          </div>
+        </motion.div>
+
+        {/* 3 — iOS Notification Graphic Demo */}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8 }} className="flex flex-col md:flex-row gap-12 md:gap-16 items-start mb-28">
+          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-8 backdrop-blur-sm w-full md:w-1/2">
+            <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
+            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">Apple iOS Notification</h3>
+            <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
+              Recreate the exact look, feel, and physics of a real iPhone notification sliding down from the top of the screen. Features authentic liquid glass backdrop filtering. Just edit the text, pick the app icon, and export.
+            </p>
+          </div>
+          <div className="w-full md:w-1/2">
+            <IosNotificationDemo />
           </div>
         </motion.div>
 
