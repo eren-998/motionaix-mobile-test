@@ -278,38 +278,6 @@ export default function TestPlayerPage() {
               >
                 {rendering ? "Rendering Client-Side..." : "⚡ Render in Browser (Client-Side)"}
               </button>
-
-              <button
-                onClick={async () => {
-                  setRendering(true);
-                  setVideoUrl(null);
-                  try {
-                    const res = await fetch("/api/render", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ origin, destination, fps, resolution }),
-                    });
-                    
-                    if (!res.ok) {
-                      const err = await res.json();
-                      alert(err.error || "Failed to render on server");
-                      setRendering(false);
-                      return;
-                    }
-                    
-                    const blob = await res.blob();
-                    const url = URL.createObjectURL(blob);
-                    setVideoUrl(url);
-                  } catch (e: any) {
-                    alert("Error: " + e.message);
-                  }
-                  setRendering(false);
-                }}
-                disabled={rendering}
-                className="w-full bg-purple-600 hover:bg-purple-500 disabled:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-purple-600/20 text-sm animate-pulse"
-              >
-                {rendering ? "Rendering..." : "☁️ True Remotion Render (Server-Side)"}
-              </button>
               
               {videoUrl && (
                 <a

@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import LiquidGlassCard from "@/components/LiquidGlassCard";
+import EarthTravelDemo from "@/components/EarthTravelDemo";
 
 /* ───────────────────────── Animated Background Waves ───────────────────────── */
 const GlassWave = ({ delay, yOffset, opacity, duration }: { delay: number; yOffset: string; opacity: number; duration: number }) => (
@@ -143,16 +144,18 @@ export default function Home() {
           </h2>
         </motion.div>
 
-        {/* 1 — Cinematic Tech Intro */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8 }} className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center mb-28">
-          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-8 backdrop-blur-sm">
-            <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Template</span>
-            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">Cinematic Tech Intro</h3>
+        {/* 1 — Earth Travel Map Demo */}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8 }} className="flex flex-col md:flex-row gap-12 md:gap-16 items-start mb-28">
+          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-8 backdrop-blur-sm w-full md:w-1/2">
+            <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
+            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">3D Flight Map Generator</h3>
             <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
-              A dark intro with glitch text, light streaks, and a logo reveal at the end. Works for tech channels, product launches, or app trailers. Change the text and logo, pick a color, export.
+              Create an animated 3D flight path between two cities. Select your origin and destination below, choose the duration, and render the video instantly—entirely inside your browser using our powerful Client-Side Rendering engine.
             </p>
           </div>
-          <VideoPlaceholder label="Cinematic Tech Intro preview" />
+          <div className="w-full md:w-1/2">
+            <EarthTravelDemo />
+          </div>
         </motion.div>
 
         {/* 2 — Subscriber Count Animation */}
