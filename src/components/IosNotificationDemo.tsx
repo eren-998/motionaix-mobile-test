@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { Play, Pause, Upload, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useInView } from "motion/react";
+import { usePlayWhenInView } from "@/hooks/usePlayWhenInView";
 
 interface PresetApp {
   name: string;
@@ -51,9 +53,8 @@ const PRESETS: Record<string, PresetApp> = {
   },
 };
 
-const TOTAL_DURATION = 5000; // 5 seconds per loop
-
 export default function IosNotificationDemo() {
+  const [totalDuration, setTotalDuration] = useState(5000);
   const [appName, setAppName] = useState(PRESETS.messages.name);
   const [notiTitle, setNotiTitle] = useState(PRESETS.messages.title);
   const [notiMessage, setNotiMessage] = useState(PRESETS.messages.message);
@@ -64,6 +65,10 @@ export default function IosNotificationDemo() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
+
+  const mainRef = React.useRef<HTMLDivElement>(null);
+  const isInView = useInView(mainRef);
+  const shouldPlay = usePlayWhenInView(isPlaying, isInView);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -84,7 +89,7 @@ export default function IosNotificationDemo() {
   };
 
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!shouldPlay) return;
 
     let requestRef: number;
     let lastTime = 0;
@@ -96,11 +101,11 @@ export default function IosNotificationDemo() {
 
       setElapsedMs((prev) => {
         const next = prev + delta;
-        if (next >= TOTAL_DURATION) {
+        if (next >= totalDuration) {
           setProgress(0);
           return 0; // loop
         }
-        setProgress(next / TOTAL_DURATION);
+        setProgress(next / totalDuration);
         return next;
       });
 
@@ -110,7 +115,7 @@ export default function IosNotificationDemo() {
     requestRef = requestAnimationFrame(animate);
 
     return () => cancelAnimationFrame(requestRef);
-  }, [isPlaying]);
+  }, [shouldPlay, totalDuration]);
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
@@ -120,16 +125,16 @@ export default function IosNotificationDemo() {
   let currentStage = "hidden";
   if (elapsedMs > 0 && elapsedMs < 700) {
     currentStage = "intro";
-  } else if (elapsedMs >= 700 && elapsedMs < (TOTAL_DURATION - 600)) {
+  } else if (elapsedMs >= 700 && elapsedMs < (totalDuration - 600)) {
     currentStage = "resting";
-  } else if (elapsedMs >= (TOTAL_DURATION - 600) && elapsedMs < TOTAL_DURATION) {
+  } else if (elapsedMs >= (totalDuration - 600) && elapsedMs < totalDuration) {
     currentStage = "outro";
   }
 
   const iconSrc = logoImage || PRESETS[selectedPreset]?.icon || "/icons/messages.svg";
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col gap-4 w-full h-full">
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes iOS-spring-in {
           0% { transform: translateY(-100px) scale(0.92); opacity: 0; }
@@ -146,13 +151,14 @@ export default function IosNotificationDemo() {
 
       {/* Video Player Canvas */}
       <div
-        className="w-full aspect-video rounded-2xl overflow-hidden border border-white/20 bg-black shadow-2xl relative flex flex-col items-center justify-start pt-12 cursor-pointer group"
+        ref={mainRef}
+        className="w-full aspect-[2/1] rounded-2xl overflow-hidden border border-white/20 bg-black shadow-2xl relative flex flex-col items-center justify-start pt-8 cursor-pointer group"
         onClick={togglePlay}
       >
         {/* Ambient Glows */}
         <div className="absolute inset-0 opacity-40 pointer-events-none">
-          <div className="absolute top-[10%] left-[25%] w-[30%] h-[30%] bg-blue-500 rounded-full mix-blend-screen filter blur-[80px] animate-[pulse_8s_ease-in-out_infinite]" />
-          <div className="absolute bottom-[20%] right-[15%] w-[40%] h-[40%] bg-purple-500 rounded-full mix-blend-screen filter blur-[100px] animate-[pulse_10s_ease-in-out_infinite_reverse]" />
+          <div className="absolute top-[10%] left-[25%] w-[30%] h-[30%] rounded-full animate-[pulse_8s_ease-in-out_infinite]" style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.4) 0%, transparent 70%)' }} />
+          <div className="absolute bottom-[20%] right-[15%] w-[40%] h-[40%] rounded-full animate-[pulse_10s_ease-in-out_infinite_reverse]" style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.4) 0%, transparent 70%)' }} />
         </div>
 
         {/* Notification Card */}
@@ -202,23 +208,37 @@ export default function IosNotificationDemo() {
       </div>
 
       {/* Controls Container */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-4 backdrop-blur-md">
+      <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col gap-2.5 backdrop-blur-md flex-1">
         
+        {/* Duration Slider */}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Sequence Duration</label>
+            <span className="text-xs text-primary-container font-bold">{(totalDuration / 1000).toFixed(1)}s</span>
+          </div>
+          <input
+            type="range" min={2000} max={10000} step={100}
+            value={totalDuration}
+            onChange={(e) => setTotalDuration(Number(e.target.value))}
+            className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-primary-container [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary-container [&::-webkit-slider-thumb]:appearance-none"
+          />
+        </div>
+
         {/* App Presets with Real Icons */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">App Presets</label>
-          <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col gap-1">
+          <label className="text-[9px] uppercase tracking-widest text-on-surface-variant font-bold">App Presets</label>
+          <div className="flex flex-wrap gap-1.5">
             {Object.keys(PRESETS).map((p) => (
               <button
                 key={p}
                 onClick={() => selectPresetApp(p)}
-                className={`flex items-center gap-1.5 py-1.5 px-3 text-xs font-bold rounded-lg border transition-all ${
+                className={`flex items-center gap-1 py-1 px-2 text-[11px] font-bold rounded-md border transition-all ${
                   selectedPreset === p
                     ? "bg-primary-container text-on-primary-container border-primary-container"
                     : "bg-black/40 border-white/10 text-white hover:bg-white/10"
                 }`}
               >
-                <Image src={PRESETS[p].icon} alt={PRESETS[p].name} width={16} height={16} className="w-4 h-4" unoptimized />
+                <Image src={PRESETS[p].icon} alt={PRESETS[p].name} width={14} height={14} className="w-3.5 h-3.5" unoptimized />
                 {PRESETS[p].name}
               </button>
             ))}
@@ -226,45 +246,42 @@ export default function IosNotificationDemo() {
         </div>
 
         {/* Custom Icon Upload */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Custom App Icon</label>
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-md bg-black/40 overflow-hidden flex items-center justify-center border border-white/10">
-              <Image src={iconSrc} alt="Icon" width={24} height={24} className="w-6 h-6 object-cover" unoptimized />
-            </div>
-            <label className="cursor-pointer flex items-center justify-center gap-2 py-2 px-3 bg-black/40 hover:bg-white/10 text-white rounded-lg transition-colors text-xs font-bold border border-white/10">
-              <Upload size={14} /> Upload Icon
-              <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-            </label>
-            {logoImage && (
-              <button onClick={() => { setLogoImage(null); setSelectedPreset("messages"); }} className="p-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/40 transition-colors">
-                <X size={14} />
-              </button>
-            )}
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-md bg-black/40 overflow-hidden flex items-center justify-center border border-white/10">
+            <Image src={iconSrc} alt="Icon" width={20} height={20} className="w-5 h-5 object-cover" unoptimized />
           </div>
+          <label className="cursor-pointer flex items-center justify-center gap-1.5 py-1.5 px-3 bg-black/40 hover:bg-white/10 text-white rounded-lg transition-colors text-[11px] font-bold border border-white/10">
+            <Upload size={12} /> Upload Icon
+            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+          </label>
+          {logoImage && (
+            <button onClick={() => { setLogoImage(null); setSelectedPreset("messages"); }} className="p-1.5 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/40 transition-colors">
+              <X size={12} />
+            </button>
+          )}
         </div>
 
         {/* Text Inputs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Notification Title</label>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex flex-col gap-0.5">
+            <label className="text-[9px] uppercase tracking-widest text-on-surface-variant font-bold">Title</label>
             <input
               type="text" value={notiTitle} onChange={(e) => setNotiTitle(e.target.value)}
-              className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary-container outline-none"
+              className="bg-black/40 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-primary-container outline-none"
             />
           </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Message</label>
+          <div className="flex flex-col gap-0.5">
+            <label className="text-[9px] uppercase tracking-widest text-on-surface-variant font-bold">Message</label>
             <input
               type="text" value={notiMessage} onChange={(e) => setNotiMessage(e.target.value)}
-              className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary-container outline-none"
+              className="bg-black/40 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-primary-container outline-none"
             />
           </div>
         </div>
 
         <Link
           href="/login"
-          className="w-full text-center py-3.5 rounded-xl font-label text-xs uppercase tracking-widest font-bold transition-colors bg-on-surface text-background hover:bg-primary-container hover:text-on-primary-container shadow-lg block mt-2"
+          className="w-full text-center py-2.5 rounded-lg font-label text-[10px] uppercase tracking-widest font-bold transition-colors bg-on-surface text-background hover:bg-primary-container hover:text-on-primary-container shadow-lg block mt-auto"
         >
           Login to Export Video
         </Link>

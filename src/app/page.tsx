@@ -1,24 +1,39 @@
 "use client";
 
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import LiquidGlassCard from "@/components/LiquidGlassCard";
 import EarthTravelDemo from "@/components/EarthTravelDemo";
 import SubscribeDemo from "@/components/SubscribeDemo";
 import IosNotificationDemo from "@/components/IosNotificationDemo";
+import YoutubeOdometerDemo from "@/components/YoutubeOdometerDemo";
+import InstagramOdometerDemo from "@/components/InstagramOdometerDemo";
+import NewsArticleDemo from "@/components/NewsArticleDemo";
+import ChartEngineDemo from "@/components/ChartEngineDemo";
+import { 
+  EarningsEssence, 
+  FileDownloadEssence, 
+  FireSliderEssence, 
+  FollowerEssence, 
+  GoalEssence, 
+  RevealEssence 
+} from "@/components/MotionEssenceCards";
 
 /* ───────────────────────── Animated Background Waves ───────────────────────── */
 const GlassWave = ({ delay, yOffset, opacity, duration }: { delay: number; yOffset: string; opacity: number; duration: number }) => (
-  <motion.div
-    animate={{ y: [0, 20, -20, 0], skewY: [0, 1, -1, 0] }}
-    transition={{ repeat: Infinity, duration, delay, ease: "easeInOut" }}
-    className="absolute left-0 w-full h-[400px] pointer-events-none"
-    style={{ top: yOffset, opacity }}
+  <div
+    className="absolute left-0 right-0 h-[600px] pointer-events-none"
+    style={{ 
+      top: yOffset, 
+      opacity: opacity * 1.5,
+      animation: `glasswave-float ${duration}s ease-in-out ${delay}s infinite`,
+      willChange: 'transform',
+    }}
   >
-    <svg className="w-full h-full" viewBox="0 0 1440 400" fill="none" preserveAspectRatio="none">
-      <path d="M0,180 C240,280 480,100 720,200 C960,300 1200,140 1440,180 L1440,400 L0,400 Z" fill="rgba(255, 255, 255, 0.12)" />
-    </svg>
-  </motion.div>
+    <div className="absolute inset-0 transform -skew-y-12" style={{ background: 'radial-gradient(ellipse at center, rgba(255, 215, 0, 0.18) 0%, transparent 70%)' }} />
+    <div className="absolute inset-0 rounded-[100%]" style={{ background: 'radial-gradient(ellipse at center, rgba(255, 165, 0, 0.14) 0%, transparent 70%)' }} />
+  </div>
 );
 
 /* ───────────────────────── Video Placeholder Box ───────────────────────── */
@@ -93,17 +108,89 @@ const PricingCard = ({
 );
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   MAIN PAGE
    ═══════════════════════════════════════════════════════════════════════════════ */
+const PromoTextWithLang = () => {
+  const [lang, setLang] = useState("ENG");
+
+  const CONTENT: Record<string, { title: React.ReactNode, text1: React.ReactNode, text2: React.ReactNode, text3: React.ReactNode, text4: React.ReactNode }> = {
+    ENG: {
+      title: <>Pro Motion Graphics, <br/><span className="text-primary-container">Zero After Effects.</span></>,
+      text1: <>Get <span className="text-white font-semibold">copyright-free After Effects templates</span> directly in your browser. Extremely lightweight and fast rendering.</>,
+      text2: <>Whether you're a <span className="text-primary-container font-medium">mobile editor</span>, laptop creator, or agency, save hundreds of hours. Access ready-made motion graphics, motion essence, mini assets, AI captions, and audio-to-waveform tools.</>,
+      text3: <>No heavy software required. No motion graphics knowledge needed. No high costs. <span className="text-white font-semibold">Many assets are completely free.</span></>,
+      text4: <>Just input your needs, customize with simple controls, and render directly to your device. Highly optimized to work perfectly even on mobile.</>
+    },
+    HGL: {
+      title: <>Pro Motion Graphics, <br/><span className="text-primary-container">Zero After Effects.</span></>,
+      text1: <>Seedhe apne browser mein <span className="text-white font-semibold">copyright-free After Effects templates</span> paayein. Bahut lightweight aur fast rendering.</>,
+      text2: <>Chahe aap <span className="text-primary-container font-medium">mobile editor</span> ho, laptop creator, ya agency, apne saikdon ghante bachayein. Ready-made motion graphics, motion essence, mini assets, AI captions aur audio-to-waveform tools access karein.</>,
+      text3: <>Na heavy software chahiye, na motion graphics ki knowledge, na zyada paise. <span className="text-white font-semibold">Bahut saare assets bilkul free hain.</span></>,
+      text4: <>Bas apni zaroorat daalein, simple controls se customize karein, aur direct apne device par render karein. Mobile par bhi best chalne ke liye optimize kiya gaya hai.</>
+    },
+    HIN: {
+      title: <>प्रो मोशन ग्राफिक्स, <br/><span className="text-primary-container">ज़ीरो आफ्टर इफेक्ट्स।</span></>,
+      text1: <>सीधे अपने ब्राउज़र में <span className="text-white font-semibold">कॉपीराइट-फ्री आफ्टर इफेक्ट्स टेम्प्लेट</span> प्राप्त करें। बहुत हल्का और तेज़ रेंडरिंग।</>,
+      text2: <>चाहे आप <span className="text-primary-container font-medium">मोबाइल एडिटर</span> हों, लैपटॉप क्रिएटर हों या एजेंसी, अपने सैकड़ों घंटे बचाएं। रेडीमेड मोशन ग्राफिक्स, मोशन एसेंस, मिनी एसेट्स, एआई कैप्शन और ऑडियो-टू-वेवफॉर्म टूल्स का उपयोग करें।</>,
+      text3: <>कोई भारी सॉफ्टवेयर की आवश्यकता नहीं, कोई मोशन ग्राफिक्स का ज्ञान नहीं, कोई भारी खर्च नहीं। <span className="text-white font-semibold">बहुत सारे एसेट्स बिल्कुल मुफ्त हैं।</span></>,
+      text4: <>बस अपनी जरूरतें दर्ज करें, सरल कंट्रोल्स के साथ कस्टमाइज़ करें, और सीधे अपने डिवाइस पर रेंडर करें। मोबाइल पर भी बेहतरीन काम करने के लिए ऑप्टिमाइज़ किया गया है।</>
+    },
+    ESP: {
+      title: <>Pro Motion Graphics, <br/><span className="text-primary-container">Cero After Effects.</span></>,
+      text1: <>Obtén <span className="text-white font-semibold">plantillas de After Effects sin derechos de autor</span> directamente en tu navegador. Extremadamente ligero y de renderizado rápido.</>,
+      text2: <>Ya seas un <span className="text-primary-container font-medium">editor móvil</span>, creador de portátiles o agencia, ahorra cientos de horas. Accede a motion graphics, assets mínimos, subtítulos con IA y herramientas de audio a forma de onda.</>,
+      text3: <>No se requiere software pesado. No se necesitan conocimientos de motion graphics. Sin altos costos. <span className="text-white font-semibold">Muchos assets son completamente gratis.</span></>,
+      text4: <>Solo ingresa tus necesidades, personaliza con controles simples y renderiza directamente a tu dispositivo. Altamente optimizado para funcionar perfectamente en móviles.</>
+    },
+    FRA: {
+      title: <>Pro Motion Graphics, <br/><span className="text-primary-container">Zéro After Effects.</span></>,
+      text1: <>Obtenez des <span className="text-white font-semibold">modèles After Effects libres de droits</span> directement dans votre navigateur. Extrêmement léger et rendu rapide.</>,
+      text2: <>Que vous soyez un <span className="text-primary-container font-medium">monteur mobile</span>, un créateur sur ordinateur ou une agence, gagnez des centaines d'heures. Accédez à des graphiques animés prêts à l'emploi et bien plus.</>,
+      text3: <>Aucun logiciel lourd requis. Aucune connaissance en motion graphics nécessaire. Pas de coûts élevés. <span className="text-white font-semibold">De nombreux actifs sont entièrement gratuits.</span></>,
+      text4: <>Il suffit d'entrer vos besoins, de personnaliser avec des commandes simples et de rendre directement sur votre appareil. Hautement optimisé pour fonctionner parfaitement sur mobile.</>
+    }
+  };
+
+  const current = CONTENT[lang];
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex justify-between items-start gap-4">
+        <h3 className="font-display text-3xl font-bold tracking-tight text-on-background leading-tight">
+          {current.title}
+        </h3>
+        {/* Language Switcher */}
+        <div className="flex gap-1 bg-white/5 p-1 rounded-lg border border-white/10 shrink-0">
+          {["ENG", "HGL", "HIN", "ESP", "FRA"].map(l => (
+            <button 
+              key={l}
+              onClick={() => setLang(l)}
+              className={`px-2 py-1 text-[10px] font-bold rounded transition-colors ${lang === l ? "bg-primary-container text-on-primary-container" : "text-white hover:bg-white/10"}`}
+            >
+              {l}
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      <div className="font-body text-base text-on-surface-variant leading-relaxed space-y-4">
+        <p>{current.text1}</p>
+        <p>{current.text2}</p>
+        <p>{current.text3}</p>
+        <p>{current.text4}</p>
+      </div>
+    </div>
+  );
+};
+
 export default function Home() {
   return (
     <div className="w-full flex flex-col items-center bg-background min-h-screen relative overflow-hidden">
 
       {/* ── Background Blobs + Waves ── */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-background">
-        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[radial-gradient(circle,_rgba(255,209,0,0.12)_0%,_rgba(255,255,255,0)_70%)] blur-[120px] animate-[pulse_10s_infinite]" />
-        <div className="absolute top-[20%] right-[-10%] w-[60vw] h-[60vw] bg-[radial-gradient(circle,_rgba(255,209,0,0.08)_0%,_rgba(255,255,255,0)_70%)] blur-[140px] animate-[pulse_12s_infinite_1s]" />
-        <div className="absolute bottom-[10%] left-[20%] w-[45vw] h-[45vw] bg-[radial-gradient(circle,_rgba(255,209,0,0.1)_0%,_rgba(255,255,255,0)_70%)] blur-[100px] animate-[pulse_8s_infinite_2s]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] animate-[pulse_10s_infinite]" style={{ background: 'radial-gradient(circle, rgba(255,209,0,0.12) 0%, transparent 70%)' }} />
+        <div className="absolute top-[20%] right-[-10%] w-[60vw] h-[60vw] animate-[pulse_12s_infinite_1s]" style={{ background: 'radial-gradient(circle, rgba(255,209,0,0.08) 0%, transparent 70%)' }} />
+        <div className="absolute bottom-[10%] left-[20%] w-[45vw] h-[45vw] animate-[pulse_8s_infinite_2s]" style={{ background: 'radial-gradient(circle, rgba(255,209,0,0.10) 0%, transparent 70%)' }} />
         <GlassWave yOffset="5%" opacity={0.5} duration={12} delay={0} />
         <GlassWave yOffset="25%" opacity={0.3} duration={16} delay={2} />
         <GlassWave yOffset="50%" opacity={0.4} duration={14} delay={4} />
@@ -139,6 +226,12 @@ export default function Home() {
           SECTION 2 — MOTION GRAPHICS SHOWCASE
           ═══════════════════════════════════════════════════════════════ */}
       <section className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-16 py-28">
+        {/* Golden ambient glow */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,209,0,0.08) 0%, transparent 70%)' }} />
+          <div className="absolute bottom-[10%] right-[5%] w-[400px] h-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(108,78,49,0.10) 0%, transparent 70%)' }} />
+        </div>
+
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="text-center mb-28">
           <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.15] max-w-4xl mx-auto">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-container via-[#ffe066] to-primary-container">Stop wasting hours on After Effects editing.</span><br />
@@ -146,81 +239,88 @@ export default function Home() {
           </h2>
         </motion.div>
 
-        {/* 1 — Earth Travel Map Demo */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8 }} className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-center mb-20">
-          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border-2 border-primary-container p-8 md:p-10 backdrop-blur-sm w-full lg:max-w-md justify-center shadow-[0_0_30px_rgba(255,200,0,0.1)]">
-            <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
-            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">3D Flight Map</h3>
-            <ul className="font-body text-sm md:text-base text-on-surface-variant leading-relaxed space-y-2 border-l-2 border-primary-container/30 pl-4">
-              <li>Animated 3D flight path between any two cities</li>
-              <li>Pick origin, destination, and video length</li>
-              <li>Preview instantly, export as video</li>
-              <li>Transparent background for easy layering</li>
-            </ul>
+        {/* 1 — Earth Travel Map Demo + Info (Side by Side) */}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8 }} className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center mb-16">
+          
+          {/* Left: Earth Travel Demo Card */}
+          <div className="flex flex-col gap-3 rounded-2xl bg-white/[0.02] border border-primary-container/30 p-5 backdrop-blur-sm shadow-[0_0_20px_rgba(255,200,0,0.04)] h-full">
+            <div className="flex items-center gap-2.5">
+              <span className="font-label text-[9px] uppercase tracking-[0.2em] text-primary-container font-bold px-2 py-0.5 rounded-full border border-primary-container/20 bg-primary-container/5">Demo</span>
+              <h3 className="font-display text-lg font-bold tracking-tight text-on-background">3D Flight Map</h3>
+            </div>
+            <div className="flex-1 flex flex-col">
+              <EarthTravelDemo />
+            </div>
           </div>
-          <div className="w-full flex-1">
-            <EarthTravelDemo />
-          </div>
+
+          {/* Right: Info Text */}
+          <PromoTextWithLang />
         </motion.div>
 
-        {/* 2 — Subscribe & Like Animation Demo */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8 }} className="flex flex-col lg:flex-row-reverse gap-10 lg:gap-14 items-center mb-20">
-          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border-2 border-primary-container p-8 md:p-10 backdrop-blur-sm w-full lg:max-w-md justify-center shadow-[0_0_30px_rgba(255,200,0,0.1)]">
-            <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
-            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">YouTube Lower Thirds</h3>
-            <ul className="font-body text-sm md:text-base text-on-surface-variant leading-relaxed space-y-2 border-l-2 border-primary-container/30 pl-4">
-              <li>Animated Like, Subscribe, and Bell sequence</li>
-              <li>Upload your channel logo and customize text</li>
-              <li>Smooth cursor movement with click effects</li>
-              <li>Alpha-transparent output for Premiere or CapCut</li>
-            </ul>
-          </div>
-          <div className="w-full flex-1">
+        {/* 2+3 — Subscribe + iOS Notification (Side by Side) */}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
+          
+          {/* Subscribe Demo Card */}
+          <div className="flex flex-col gap-3 rounded-2xl bg-white/[0.02] border border-primary-container/30 p-5 backdrop-blur-sm shadow-[0_0_20px_rgba(255,200,0,0.04)]">
+            <div className="flex items-center gap-2.5">
+              <span className="font-label text-[9px] uppercase tracking-[0.2em] text-primary-container font-bold px-2 py-0.5 rounded-full border border-primary-container/20 bg-primary-container/5">Demo</span>
+              <h3 className="font-display text-lg font-bold tracking-tight text-on-background">YouTube Lower Thirds</h3>
+            </div>
             <SubscribeDemo />
           </div>
-        </motion.div>
 
-        {/* 3 — iOS Notification Graphic Demo */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8 }} className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-center mb-20">
-          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border-2 border-primary-container p-8 md:p-10 backdrop-blur-sm w-full lg:max-w-md justify-center shadow-[0_0_30px_rgba(255,200,0,0.1)]">
-            <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Interactive Demo</span>
-            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">iOS Notification</h3>
-            <ul className="font-body text-sm md:text-base text-on-surface-variant leading-relaxed space-y-2 border-l-2 border-primary-container/30 pl-4">
-              <li>Realistic iPhone notification drop-in animation</li>
-              <li>Built-in app icons: WhatsApp, Instagram, Gmail, and more</li>
-              <li>Upload your own app icon or use presets</li>
-              <li>Edit title, message, and time text</li>
-            </ul>
-          </div>
-          <div className="w-full flex-1">
+          {/* iOS Notification Demo Card */}
+          <div className="flex flex-col gap-3 rounded-2xl bg-white/[0.02] border border-primary-container/30 p-5 backdrop-blur-sm shadow-[0_0_20px_rgba(255,200,0,0.04)]">
+            <div className="flex items-center gap-2.5">
+              <span className="font-label text-[9px] uppercase tracking-[0.2em] text-primary-container font-bold px-2 py-0.5 rounded-full border border-primary-container/20 bg-primary-container/5">Demo</span>
+              <h3 className="font-display text-lg font-bold tracking-tight text-on-background">iOS Notification</h3>
+            </div>
             <IosNotificationDemo />
           </div>
         </motion.div>
 
-        {/* 2 — Subscriber Count Animation */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8, delay: 0.1 }} className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center mb-28">
-          <div className="flex flex-col gap-5 md:order-2 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-8 backdrop-blur-sm">
-            <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Mini Asset</span>
-            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">Subscriber Count Animation</h3>
-            <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
-              Shows a number counting up from zero to your subscriber or follower count. Clean background, big bold number, smooth easing. Type in any number and it animates to that.
-            </p>
+        {/* 4+5 — YouTube Odometer + Instagram Odometer (Side by Side) */}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
+          
+          {/* YouTube Odometer Demo Card */}
+          <div className="flex flex-col gap-3 rounded-2xl bg-white/[0.02] border border-primary-container/30 p-5 backdrop-blur-sm shadow-[0_0_20px_rgba(255,200,0,0.04)]">
+            <div className="flex items-center gap-2.5">
+              <span className="font-label text-[9px] uppercase tracking-[0.2em] text-primary-container font-bold px-2 py-0.5 rounded-full border border-primary-container/20 bg-primary-container/5">Demo</span>
+              <h3 className="font-display text-lg font-bold tracking-tight text-on-background">YouTube Odometer Count</h3>
+            </div>
+            <YoutubeOdometerDemo />
           </div>
-          <div className="md:order-1">
-            <VideoPlaceholder label="Subscriber Count preview" />
+
+          {/* Instagram Odometer Demo Card */}
+          <div className="flex flex-col gap-3 rounded-2xl bg-white/[0.02] border border-primary-container/30 p-5 backdrop-blur-sm shadow-[0_0_20px_rgba(255,200,0,0.04)]">
+            <div className="flex items-center gap-2.5">
+              <span className="font-label text-[9px] uppercase tracking-[0.2em] text-primary-container font-bold px-2 py-0.5 rounded-full border border-primary-container/20 bg-primary-container/5">Demo</span>
+              <h3 className="font-display text-lg font-bold tracking-tight text-on-background">Instagram Follower Count</h3>
+            </div>
+            <InstagramOdometerDemo />
           </div>
         </motion.div>
 
-        {/* 3 — News Headline Highlight */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8, delay: 0.1 }} className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center mb-28">
-          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-8 backdrop-blur-sm">
-            <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Template</span>
-            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">News Headline Highlight</h3>
-            <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
-              An article screenshot slides in, then a magnifying glass scans across key sentences and highlights them. Paste your headline, adjust the highlight color, done.
-            </p>
+        {/* Interstitial Typography Section */}
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="w-full flex justify-center mb-16 mt-8">
+          <div className="relative inline-block px-12 py-6 rounded-full border border-primary-container/20 bg-white/[0.01] shadow-[inset_0_0_40px_rgba(255,215,0,0.03)] backdrop-blur-md">
+            <h2 className="font-display text-2xl md:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] text-center" style={{ textShadow: '0 4px 20px rgba(255, 215, 0, 0.2)' }}>
+              Made by video editors, <br className="md:hidden" /> made for video editors
+            </h2>
+            <div className="absolute -top-4 -left-4 text-primary-container/40">✦</div>
+            <div className="absolute -bottom-4 -right-4 text-primary-container/40">✦</div>
           </div>
-          <VideoPlaceholder label="News Headline Highlight preview" />
+        </motion.div>
+
+        {/* 3 — News Article Engine (Graphics Engine) */}
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8 }} className="w-full mb-16">
+          <div className="flex flex-col gap-3 rounded-2xl bg-white/[0.02] border border-primary-container/30 p-5 backdrop-blur-sm shadow-[0_0_20px_rgba(255,200,0,0.04)]">
+            <div className="flex items-center gap-2.5">
+              <span className="font-label text-[9px] uppercase tracking-[0.2em] text-primary-container font-bold px-2 py-0.5 rounded-full border border-primary-container/20 bg-primary-container/5">Demo</span>
+              <h3 className="font-display text-lg font-bold tracking-tight text-on-background">News Article Highlight</h3>
+            </div>
+            <NewsArticleDemo />
+          </div>
         </motion.div>
 
         {/* 4 — Product Demo Layout */}
@@ -238,15 +338,24 @@ export default function Home() {
         </motion.div>
 
         {/* 5 — Chart Drop Animation */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8, delay: 0.1 }} className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
-          <div className="flex flex-col gap-5 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-8 backdrop-blur-sm">
-            <span className="self-start font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Mini Asset</span>
-            <h3 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-on-background">Chart Drop Animation</h3>
-            <p className="font-body text-base text-on-surface-variant leading-relaxed border-l-2 border-primary-container/30 pl-4">
-              Animated bar chart or line graph that builds itself up bar by bar. Feed it your numbers and labels, pick a style, and it renders a clean data visualization clip you can use in any video.
-            </p>
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.8, delay: 0.1 }} className="w-full mb-16">
+          <div className="flex flex-col gap-4 rounded-3xl bg-white/[0.03] border border-white/[0.06] p-5 md:p-8 backdrop-blur-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2.5">
+                  <span className="font-label text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold px-3 py-1 rounded-full border border-primary-container/20 bg-primary-container/5">Motion Essence</span>
+                  <h3 className="font-display text-2xl font-bold tracking-tight text-on-background">Chart Drop Animation</h3>
+                </div>
+                <p className="font-body text-sm text-on-surface-variant max-w-2xl">
+                  Animated bar chart that builds itself up bar by bar. Feed it your numbers, customize the insights, and export a clean data visualization clip.
+                </p>
+              </div>
+            </div>
+            
+            <div className="mt-4">
+              <ChartEngineDemo />
+            </div>
           </div>
-          <VideoPlaceholder label="Chart Drop Animation preview" />
         </motion.div>
 
         {/* Closing Callout */}
@@ -259,24 +368,24 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          SECTION 3 — TEMPLATE LIBRARY
+          SECTION 3 — MOTION ESSENCE LIBRARY
           ═══════════════════════════════════════════════════════════════ */}
       <section className="relative z-10 w-full bg-surface-container-low/50 py-28 border-y border-white/10">
         <div className="max-w-[1400px] mx-auto px-6 md:px-16">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="text-center mb-16">
-            <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tight mb-6 text-on-background">Template Library</h2>
-            <p className="font-body text-xl text-on-surface-variant max-w-2xl mx-auto">A growing set of ready-to-edit templates, including:</p>
+            <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tight mb-6 text-on-background">Motion Essence Library</h2>
+            <p className="font-body text-lg text-on-surface-variant max-w-2xl mx-auto">
+              Small, lightweight motion animations with minimal customization. Perfect for quick visual elements like money counters, progress bars, and simple text reveals.
+            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <TemplateCard name="Travel Route on Map with 3D Landmarks" desc="Animated route line across a 3D map" delay={0.05} />
-            <TemplateCard name="News Article Headline Highlight" desc="Headline reveal with a magnifying-glass overview effect on key sentences" delay={0.1} />
-            <TemplateCard name="Product Demo Layout" desc="Clean walkthrough layout for showcasing a product" delay={0.15} />
-            <TemplateCard name="Launch Video on X" desc="Announcement-style template for product/feature launches" delay={0.2} />
-            <TemplateCard name="Cinematic Tech Intro" desc="Dark, high-contrast intro sequence" delay={0.25} />
-            <TemplateCard name="Transparent Call-To-Action Overlay" desc="CTA overlay for layering on existing footage" delay={0.3} />
-            <TemplateCard name="Shape to Words Transformation" desc="Shapes morphing into typography" delay={0.35} />
-            <TemplateCard name="Audio Spectrum Visualizer" desc="Reactive waveform/spectrum animation" delay={0.4} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <EarningsEssence delay={0.05} />
+            <FileDownloadEssence delay={0.1} />
+            <FireSliderEssence delay={0.15} />
+            <FollowerEssence delay={0.2} />
+            <GoalEssence delay={0.25} />
+            <RevealEssence delay={0.3} />
           </div>
         </div>
       </section>

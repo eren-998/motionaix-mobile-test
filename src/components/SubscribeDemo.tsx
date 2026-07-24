@@ -4,18 +4,23 @@ import React, { useState, useEffect } from "react";
 import { Play, Pause, Bell, BellRing, ChevronDown, User, Upload, X, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
-const TOTAL_DURATION = 5000; // 5 seconds per loop
+import { useInView } from "motion/react";
+import { usePlayWhenInView } from "@/hooks/usePlayWhenInView";
 
 export default function SubscribeDemo() {
   const [channelName, setChannelName] = useState("Motionaix");
   const [handle, setHandle] = useState("@motionaix");
   const [subCount, setSubCount] = useState("1.2M subscribers");
   const [logoImage, setLogoImage] = useState<string | null>(null);
+  const [totalDuration, setTotalDuration] = useState(5000);
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
+
+  const mainRef = React.useRef<HTMLDivElement>(null);
+  const isInView = useInView(mainRef);
+  const shouldPlay = usePlayWhenInView(isPlaying, isInView);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -26,7 +31,7 @@ export default function SubscribeDemo() {
   };
 
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!shouldPlay) return;
 
     let requestRef: number;
     let lastTime = 0;
@@ -38,11 +43,11 @@ export default function SubscribeDemo() {
 
       setElapsedMs((prev) => {
         const next = prev + delta;
-        if (next >= TOTAL_DURATION) {
+        if (next >= totalDuration) {
           setProgress(0);
           return 0; // Loop back
         }
-        setProgress(next / TOTAL_DURATION);
+        setProgress(next / totalDuration);
         return next;
       });
 
@@ -52,7 +57,7 @@ export default function SubscribeDemo() {
     requestRef = requestAnimationFrame(animate);
 
     return () => cancelAnimationFrame(requestRef);
-  }, [isPlaying]);
+  }, [shouldPlay, totalDuration]);
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
@@ -60,14 +65,14 @@ export default function SubscribeDemo() {
 
   // Determine animStage based on elapsed time
   let animStage = 0;
-  const tMoveToLike = TOTAL_DURATION * 0.10;
-  const tClickLike = TOTAL_DURATION * 0.22;
-  const tMoveToSub = TOTAL_DURATION * 0.35;
-  const tClickSub = TOTAL_DURATION * 0.48;
-  const tMoveToBell = TOTAL_DURATION * 0.60;
-  const tClickBell = TOTAL_DURATION * 0.72;
-  const tExitMouse = TOTAL_DURATION * 0.85;
-  const tCardOutro = TOTAL_DURATION * 0.95;
+  const tMoveToLike = totalDuration * 0.10;
+  const tClickLike = totalDuration * 0.22;
+  const tMoveToSub = totalDuration * 0.35;
+  const tClickSub = totalDuration * 0.48;
+  const tMoveToBell = totalDuration * 0.60;
+  const tClickBell = totalDuration * 0.72;
+  const tExitMouse = totalDuration * 0.85;
+  const tCardOutro = totalDuration * 0.95;
 
   if (elapsedMs > 0 && elapsedMs < tMoveToLike) animStage = 1;
   else if (elapsedMs >= tMoveToLike && elapsedMs < tClickLike) animStage = 2;
@@ -81,7 +86,7 @@ export default function SubscribeDemo() {
 
   const getMouseTransitionDuration = () => {
     if ([3, 5, 7].includes(animStage)) return "0.08s";
-    const proportionalSpeed = TOTAL_DURATION * 0.12;
+    const proportionalSpeed = totalDuration * 0.12;
     const travelSpeedSeconds = Math.min(600, proportionalSpeed) / 1000;
     return `${travelSpeedSeconds}s`;
   };
@@ -109,7 +114,7 @@ export default function SubscribeDemo() {
   const isBellRinging = animStage >= 7;
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col gap-4 w-full h-full">
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes bounce-in {
           0% { transform: translateY(80px) scale(0.9); opacity: 0; }
@@ -132,15 +137,16 @@ export default function SubscribeDemo() {
         .anim-bell { animation: bell-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards; }
       `}} />
 
-      {/* Preview Canvas */}
+      {/* Video Canvas Container */}
       <div 
-        className="w-full aspect-video rounded-2xl overflow-hidden border border-white/20 bg-black shadow-2xl relative flex items-center justify-center cursor-pointer group"
+        ref={mainRef}
+        className="w-full aspect-[2/1] rounded-2xl overflow-hidden border border-white/20 bg-black shadow-2xl relative flex items-center justify-center cursor-pointer group"
         onClick={togglePlay}
       >
         {/* Background Gradients */}
         <div className="absolute inset-0 opacity-40 pointer-events-none">
-          <div className="absolute top-[20%] left-[20%] w-64 h-64 bg-primary-container rounded-full mix-blend-screen filter blur-[100px] animate-[pulse_8s_ease-in-out_infinite]" />
-          <div className="absolute bottom-[20%] right-[20%] w-64 h-64 bg-[#6c4e31] rounded-full mix-blend-screen filter blur-[120px] animate-[pulse_10s_ease-in-out_infinite_reverse]" />
+          <div className="absolute top-[20%] left-[20%] w-64 h-64 rounded-full animate-[pulse_8s_ease-in-out_infinite]" style={{ background: 'radial-gradient(circle, rgba(255,209,0,0.5) 0%, transparent 70%)' }} />
+          <div className="absolute bottom-[20%] right-[20%] w-64 h-64 rounded-full animate-[pulse_10s_ease-in-out_infinite_reverse]" style={{ background: 'radial-gradient(circle, rgba(108,78,49,0.5) 0%, transparent 70%)' }} />
         </div>
 
         {/* Lower Third Banner */}
@@ -246,59 +252,70 @@ export default function SubscribeDemo() {
       </div>
 
       {/* Controls Container */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col gap-4 backdrop-blur-md">
+      <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col gap-2.5 backdrop-blur-md flex-1">
         
+        {/* Duration Slider */}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Sequence Duration</label>
+            <span className="text-xs text-primary-container font-bold">{(totalDuration / 1000).toFixed(1)}s</span>
+          </div>
+          <input
+            type="range" min={2000} max={10000} step={100}
+            value={totalDuration}
+            onChange={(e) => setTotalDuration(Number(e.target.value))}
+            className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-primary-container [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary-container [&::-webkit-slider-thumb]:appearance-none"
+          />
+        </div>
+
         {/* Upload Logo */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Channel Logo</label>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-black/40 overflow-hidden flex items-center justify-center shrink-0 border border-white/10">
-              {logoImage ? (
-                <Image src={logoImage} alt="Logo" width={40} height={40} className="w-full h-full object-cover" unoptimized />
-              ) : (
-                <User size={18} className="text-white/50" />
-              )}
-            </div>
-            <label className="cursor-pointer flex items-center justify-center gap-2 py-2 px-4 bg-black/40 hover:bg-white/10 text-white rounded-lg transition-colors text-xs font-bold border border-white/10">
-              <Upload size={14} /> Upload Image
-              <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-            </label>
-            {logoImage && (
-              <button onClick={() => setLogoImage(null)} className="p-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/40 transition-colors">
-                <X size={14} />
-              </button>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-black/40 overflow-hidden flex items-center justify-center shrink-0 border border-white/10">
+            {logoImage ? (
+              <Image src={logoImage} alt="Logo" width={32} height={32} className="w-full h-full object-cover" unoptimized />
+            ) : (
+              <User size={14} className="text-white/50" />
             )}
           </div>
+          <label className="cursor-pointer flex items-center justify-center gap-1.5 py-1.5 px-3 bg-black/40 hover:bg-white/10 text-white rounded-lg transition-colors text-[11px] font-bold border border-white/10">
+            <Upload size={12} /> Upload Logo
+            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+          </label>
+          {logoImage && (
+            <button onClick={() => setLogoImage(null)} className="p-1.5 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/40 transition-colors">
+              <X size={12} />
+            </button>
+          )}
         </div>
 
         {/* Text Inputs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Channel Name</label>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="flex flex-col gap-0.5">
+            <label className="text-[9px] uppercase tracking-widest text-on-surface-variant font-bold">Channel Name</label>
             <input 
               type="text" value={channelName} onChange={(e) => setChannelName(e.target.value)}
-              className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary-container outline-none"
+              className="bg-black/40 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-primary-container outline-none"
             />
           </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Handle</label>
+          <div className="flex flex-col gap-0.5">
+            <label className="text-[9px] uppercase tracking-widest text-on-surface-variant font-bold">Handle</label>
             <input 
               type="text" value={handle} onChange={(e) => setHandle(e.target.value)}
-              className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary-container outline-none"
+              className="bg-black/40 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-primary-container outline-none"
             />
           </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Subscribers</label>
+          <div className="flex flex-col gap-0.5">
+            <label className="text-[9px] uppercase tracking-widest text-on-surface-variant font-bold">Subscribers</label>
             <input 
               type="text" value={subCount} onChange={(e) => setSubCount(e.target.value)}
-              className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-primary-container outline-none"
+              className="bg-black/40 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-primary-container outline-none"
             />
           </div>
         </div>
 
         <Link
           href="/login"
-          className="w-full text-center py-3.5 rounded-xl font-label text-xs uppercase tracking-widest font-bold transition-colors bg-white/5 border border-white/10 text-white hover:bg-white/10 shadow-lg block mt-2"
+          className="w-full text-center py-2.5 rounded-lg font-label text-[10px] uppercase tracking-widest font-bold transition-colors bg-on-surface text-background hover:bg-primary-container hover:text-on-primary-container shadow-lg block mt-auto"
         >
           Login to Export Video
         </Link>

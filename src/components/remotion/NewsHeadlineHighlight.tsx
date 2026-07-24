@@ -25,19 +25,19 @@ export const NewsHeadlineHighlight: React.FC<NewsHeadlineHighlightProps> = ({
   const { fps, durationInFrames } = useVideoConfig();
 
   /* ── Article card slide-in ── */
-  const cardSlideY = interpolate(frame, [0, 0.8 * fps], [80, 0], {
+  const cardSlideY = interpolate(frame, [0, Math.floor(durationInFrames * 0.25)], [80, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.exp),
   });
-  const cardOpacity = interpolate(frame, [0, 0.5 * fps], [0, 1], {
+  const cardOpacity = interpolate(frame, [0, Math.floor(durationInFrames * 0.15)], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
   /* ── Magnifying glass sweep ── */
-  const sweepStart = 1.0 * fps;
-  const sweepEnd = 2.5 * fps;
+  const sweepStart = Math.floor(durationInFrames * 0.25);
+  const sweepEnd = Math.floor(durationInFrames * 0.75);
   const magX = interpolate(frame, [sweepStart, sweepEnd], [-15, 105], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -45,36 +45,36 @@ export const NewsHeadlineHighlight: React.FC<NewsHeadlineHighlightProps> = ({
   });
   const magOpacity = interpolate(
     frame,
-    [sweepStart, sweepStart + 0.2 * fps, sweepEnd - 0.3 * fps, sweepEnd],
+    [sweepStart, sweepStart + Math.floor(durationInFrames * 0.08), sweepEnd - Math.floor(durationInFrames * 0.08), sweepEnd],
     [0, 0.85, 0.85, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
 
   /* ── Word highlighting (staggered) ── */
-  const highlightStagger = 0.4 * fps;
-  const highlightStart = 1.5 * fps;
+  const highlightStagger = Math.floor(durationInFrames * 0.1);
+  const highlightStart = Math.floor(durationInFrames * 0.35);
 
   /* ── Source badge ── */
-  const badgeDelay = 0.3 * fps;
-  const badgeOpacity = interpolate(frame, [badgeDelay, badgeDelay + 0.4 * fps], [0, 1], {
+  const badgeDelay = Math.floor(durationInFrames * 0.1);
+  const badgeOpacity = interpolate(frame, [badgeDelay, badgeDelay + Math.floor(durationInFrames * 0.15)], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const badgeX = interpolate(frame, [badgeDelay, badgeDelay + 0.5 * fps], [-20, 0], {
+  const badgeX = interpolate(frame, [badgeDelay, badgeDelay + Math.floor(durationInFrames * 0.18)], [-20, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.quad),
   });
 
   /* ── Decorative elements ── */
-  const lineWidth = interpolate(frame, [0.5 * fps, 1.5 * fps], [0, 100], {
+  const lineWidth = interpolate(frame, [Math.floor(durationInFrames * 0.15), Math.floor(durationInFrames * 0.45)], [0, 100], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.inOut(Easing.quad),
   });
 
   /* ── Exit ── */
-  const exitStart = durationInFrames - 0.5 * fps;
+  const exitStart = Math.floor(durationInFrames * 0.9);
   const exitOpacity = interpolate(frame, [exitStart, durationInFrames], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -184,7 +184,7 @@ export const NewsHeadlineHighlight: React.FC<NewsHeadlineHighlightProps> = ({
             // Highlight background wipe
             const wordStart = highlightStart + highlightIndex * highlightStagger;
             const hlProgress = isHighlighted
-              ? interpolate(frame, [wordStart, wordStart + 0.4 * fps], [0, 1], {
+              ? interpolate(frame, [wordStart, wordStart + Math.floor(durationInFrames * 0.1)], [0, 1], {
                   extrapolateLeft: "clamp",
                   extrapolateRight: "clamp",
                   easing: Easing.out(Easing.quad),
@@ -225,8 +225,8 @@ export const NewsHeadlineHighlight: React.FC<NewsHeadlineHighlightProps> = ({
         {/* Fake article lines */}
         <div style={{ marginTop: 28, display: "flex", flexDirection: "column", gap: 10 }}>
           {[85, 92, 70, 60].map((w, i) => {
-            const lineDelay = 0.6 * fps + i * 0.1 * fps;
-            const lineOp = interpolate(frame, [lineDelay, lineDelay + 0.3 * fps], [0, 0.2], {
+            const lineDelay = Math.floor(durationInFrames * 0.2) + i * Math.floor(durationInFrames * 0.05);
+            const lineOp = interpolate(frame, [lineDelay, lineDelay + Math.floor(durationInFrames * 0.1)], [0, 0.2], {
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
             });

@@ -57,7 +57,7 @@
 
 .dark {
   /* Dark Mode (Liquid Glass) */
-  --background: #171309;
+  --background: #241e12;
   --foreground: #ebe2cf;
   
   --color-surface-container-lowest: #110e05;
@@ -72,7 +72,7 @@
   --color-error: #ffb4ab;
   --color-secondary-container: #e2d200;
   --color-primary-container: #ffd100;
-  --color-background: #171309;
+  --color-background: #241e12;
   --color-on-secondary-fixed-variant: #4e4800;
   --color-on-error: #690005;
   --color-on-surface: #ebe2cf;
@@ -372,4 +372,14 @@ body {
 
 .dark .glass-btn-subtitle {
   color: rgba(255, 255, 255, 0.65);
+}
+
+/* Golden Aurora Wave Animation (GPU-friendly, no blur filters) */
+@keyframes glasswave-float {
+  0%, 100% {
+    transform: translate3d(-8%, -8%, 0) scale(1) rotate(-4deg);
+  }
+  50% {
+    transform: translate3d(8%, 8%, 0) scale(1.15) rotate(4deg);
+  }
 }

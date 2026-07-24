@@ -26,15 +26,16 @@ export default function Navbar() {
             footerHref="/templates"
           />
 
-          {/* Mini Motion Assets Dropdown */}
+          {/* Motion Essence Dropdown */}
           <NavDropdown
-            trigger="Mini Motion Assets"
+            trigger="Motion Essence"
             items={[
-              { label: "Subscriber Count", desc: "Animated subscriber/follower counter clip", href: "/login" },
-              { label: "File Arrange", desc: "Files sorting and organizing motion clip", href: "/login" },
-              { label: "Chart Drop", desc: "Animated chart/graph drop-in transition", href: "/login" },
+              { label: "Earnings Counter", desc: "Slide-in with number increment effect", href: "/login" },
+              { label: "File Download", desc: "Progress bar filling animation", href: "/login" },
+              { label: "Fire Slider", desc: "Smooth sliding motion with glow", href: "/login" },
+              { label: "Follower Count", desc: "Rapid counter rolling animation", href: "/login" },
             ]}
-            footerLabel="Browse All Assets"
+            footerLabel="Browse All Essence"
             footerHref="/login"
           />
 

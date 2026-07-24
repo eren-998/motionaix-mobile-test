@@ -173,9 +173,9 @@ function createGeoTexture(geojsonData: GeoJSONData): THREE.CanvasTexture | null 
 
   geojsonData.features.forEach((f: GeoJSONFeature) => {
     const g = f.geometry;
-    if (g.type === "Polygon") g.coordinates.forEach(drawPoly);
+    if (g.type === "Polygon") (g.coordinates as number[][][]).forEach(drawPoly);
     else if (g.type === "MultiPolygon")
-      g.coordinates.forEach((p: number[][][]) => p.forEach(drawPoly));
+      (g.coordinates as number[][][][]).forEach((p) => p.forEach(drawPoly));
   });
 
   const tex = new THREE.CanvasTexture(c);

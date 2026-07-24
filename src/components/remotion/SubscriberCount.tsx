@@ -59,10 +59,10 @@ export const SubscriberCount: React.FC<SubscriberCountProps> = ({
   bgColor = "#0D0D0D",
 }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { durationInFrames } = useVideoConfig();
 
-  /* ── Count-up with smooth easeOut ── */
-  const countDuration = 2.5 * fps; // 2.5 seconds
+  /* ── Proportional count-up duration ── */
+  const countDuration = Math.floor(durationInFrames * 0.7);
   const countProgress = interpolate(frame, [0, countDuration], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -70,8 +70,8 @@ export const SubscriberCount: React.FC<SubscriberCountProps> = ({
   });
   const currentNumber = Math.round(countProgress * targetNumber);
 
-  /* ── Number scale entrance (spring-like via easing) ── */
-  const scaleIn = interpolate(frame, [0, 0.6 * fps], [0.4, 1], {
+  /* ── Number scale entrance ── */
+  const scaleIn = interpolate(frame, [0, Math.floor(durationInFrames * 0.25)], [0.4, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.exp),
@@ -81,7 +81,7 @@ export const SubscriberCount: React.FC<SubscriberCountProps> = ({
   const settleFrame = countDuration;
   const bounceProgress =
     frame >= settleFrame
-      ? interpolate(frame, [settleFrame, settleFrame + 0.3 * fps], [0, 1], {
+      ? interpolate(frame, [settleFrame, settleFrame + Math.floor(durationInFrames * 0.15)], [0, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: Easing.out(Easing.sin),
@@ -92,26 +92,26 @@ export const SubscriberCount: React.FC<SubscriberCountProps> = ({
     : 1;
 
   /* ── Label fade + slide ── */
-  const labelDelay = 0.4 * fps;
-  const labelOpacity = interpolate(frame, [labelDelay, labelDelay + 0.6 * fps], [0, 1], {
+  const labelDelay = Math.floor(durationInFrames * 0.15);
+  const labelOpacity = interpolate(frame, [labelDelay, labelDelay + Math.floor(durationInFrames * 0.2)], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const labelY = interpolate(frame, [labelDelay, labelDelay + 0.6 * fps], [24, 0], {
+  const labelY = interpolate(frame, [labelDelay, labelDelay + Math.floor(durationInFrames * 0.2)], [24, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.quad),
   });
 
   /* ── Accent line width ── */
-  const lineWidth = interpolate(frame, [0.2 * fps, 1.2 * fps], [0, 240], {
+  const lineWidth = interpolate(frame, [Math.floor(durationInFrames * 0.1), Math.floor(durationInFrames * 0.45)], [0, 240], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.inOut(Easing.quad),
   });
 
-  /* ── Exit fade (last 0.5s) ── */
-  const exitStart = durationInFrames - 0.5 * fps;
+  /* ── Exit fade (last 10% of frames) ── */
+  const exitStart = Math.floor(durationInFrames * 0.9);
   const exitOpacity = interpolate(frame, [exitStart, durationInFrames], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",

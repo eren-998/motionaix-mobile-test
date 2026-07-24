@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scratch & test artifacts
+.agents
+graphify-out
+test-results
+debug-repro.spec.ts
+.debug-journal.md
+skills-lock.json
+

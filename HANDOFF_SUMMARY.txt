@@ -1,0 +1,58 @@
+================================================================================
+SESSION HANDOFF SUMMARY: MotionAIx Video Exporter & Remotion Pipeline
+================================================================================
+
+1. PROJECT OVERVIEW & GOAL
+--------------------------------------------------------------------------------
+- Codebase: MotionAIx (Next.js 16 + Tailwind CSS v4 + Remotion + WebCodecs)
+- Primary Location: C:\Users\kaif\motionaix
+- Test Player URL: http://localhost:3000/test-player
+- Landing Page URL: http://localhost:3000
+
+2. WORK COMPLETED IN LATEST SESSION
+--------------------------------------------------------------------------------
+A. Render Performance Overhaul & Latency Diagnosis:
+   - Root Cause Identified: html-to-image DOM-to-SVG-to-Canvas serialization was running on every frame.
+   - Optimization #1: Configured VP9 WebCodecs VideoEncoder to `latencyMode: "realtime"` (3-5x faster single-pass encoding).
+   - Optimization #2: Set `skipFonts: true` in html-to-image to bypass redundant @font-face re-fetching (~100-300ms saved per frame).
+   - Optimization #3: Implemented `ExportModeContext` to scale particle counts (150 -> 45 in FireSlider) during video export.
+   - Optimization #4: Batched React progress state updates to ~20 key intervals instead of re-rendering on every single frame.
+   - Optimization #5: Implemented Double-RAF settling for accurate canvas frame capture.
+
+B. Proportional Animation Keyframe & Duration Scaling:
+   - Fixed bug where changing video duration (2s, 4s, 8s, 10s, 15s) only stretched static trailing frames.
+   - Updated all 6 Remotion compositions (FireSlider, Earnings, Follower, Goal, FileDownload, Reveal) to compute keyframes dynamically based on `durationInFrames` from `useVideoConfig()`.
+   - Card entrances, dollar/follower counter odometers, slider fills, and light sheen sweeps now stretch smoothly across the entire set duration.
+
+C. Dynamic Theme-Matching Border / Outline Feature:
+   - Added "Add Border / Outline" toggle checkbox in settings grid on `/test-player`.
+   - Added "Border" toggle checkbox to all essence cards on the landing page (`src/components/MotionEssenceCards.tsx`).
+   - Theme-Tailored Border Outlines:
+     • Fire Slider: Volcanic Fiery Amber (#f97316) / Glacial Cyan Frost (#22d3ee)
+     • Earnings: Emerald Digital Vault (#4ade80)
+     • Flight Map: Deep Cosmic Blue (#3b82f6)
+     • File Download: Sapphire Cyber (#38bdf8)
+     • Social Growth: Creator Pink Sunset (#ec4899)
+     • Target Tracker: Imperial Gold (#eab308)
+     • Cinematic Reveal: Hollywood Purple (#a855f7)
+   - Canvas Export Integration: Implemented `drawBorderOnCanvas()` in `startCSRRender()`. When enabled, the outline and volumetric glow are burned directly into the canvas pixels, ensuring the exported WebM/MP4 video file contains the outline.
+
+3. RELEVANT FILES MODIFIED
+--------------------------------------------------------------------------------
+- C:\Users\kaif\motionaix\src\app\test-player\page.tsx
+- C:\Users\kaif\motionaix\src\components\MotionEssenceCards.tsx
+- C:\Users\kaif\motionaix\src\lib\export-context.ts (New)
+- C:\Users\kaif\motionaix\src\components\remotion\FireSliderRemotion.tsx
+- C:\Users\kaif\motionaix\src\components\remotion\EarningsRemotion.tsx
+- C:\Users\kaif\motionaix\src\components\remotion\FollowerRemotion.tsx
+- C:\Users\kaif\motionaix\src\components\remotion\GoalRemotion.tsx
+- C:\Users\kaif\motionaix\src\components\remotion\FileDownloadRemotion.tsx
+- C:\Users\kaif\motionaix\src\components\remotion\RevealRemotion.tsx
+
+4. CURRENT SYSTEM STATE & VERIFICATION
+--------------------------------------------------------------------------------
+- Dev Server: Running at http://localhost:3000
+- TypeScript: 0 compilation errors across project files.
+- Export pipeline: WebM/MP4 video rendering verified with burned-in borders and dynamic keyframe duration scaling.
+
+================================================================================
