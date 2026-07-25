@@ -17,7 +17,11 @@ import {
   FireSliderEssence, 
   FollowerEssence, 
   GoalEssence, 
-  RevealEssence 
+  RevealEssence,
+  IncomingCallEssence,
+  VoiceMemoEssence,
+  BatteryChargeEssence,
+  EssenceNoticeCard
 } from "@/components/MotionEssenceCards";
 
 /* ───────────────────────── Animated Background Waves ───────────────────────── */
@@ -386,7 +390,12 @@ export default function Home() {
             <FollowerEssence delay={0.2} />
             <GoalEssence delay={0.25} />
             <RevealEssence delay={0.3} />
+            <IncomingCallEssence delay={0.35} />
+            <VoiceMemoEssence delay={0.4} />
+            <BatteryChargeEssence delay={0.45} />
           </div>
+
+          <EssenceNoticeCard />
         </div>
       </section>
 

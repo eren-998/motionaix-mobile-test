@@ -11,6 +11,9 @@ import { FireSliderRemotion } from "../components/remotion/FireSliderRemotion";
 import { FollowerRemotion } from "../components/remotion/FollowerRemotion";
 import { GoalRemotion } from "../components/remotion/GoalRemotion";
 import { RevealRemotion } from "../components/remotion/RevealRemotion";
+import { IncomingCallRemotion } from "../components/remotion/IncomingCallRemotion";
+import { VoiceMemoRemotion } from "../components/remotion/VoiceMemoRemotion";
+import { BatteryChargeRemotion } from "../components/remotion/BatteryChargeRemotion";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -141,6 +144,42 @@ export const RemotionRoot: React.FC = () => {
             "Browser-based editor",
           ],
           accentColor: "#FFD100",
+        }}
+      />
+      <Composition
+        id="IncomingCallRemotion"
+        component={IncomingCallRemotion}
+        durationInFrames={120}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={{
+          callerName: "Claude Code",
+          subtitle: "incoming call...",
+        }}
+      />
+      <Composition
+        id="VoiceMemoRemotion"
+        component={VoiceMemoRemotion}
+        durationInFrames={120}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={{
+          title: "New Recording 12",
+          subtitle: "Voice Memos",
+        }}
+      />
+      <Composition
+        id="BatteryChargeRemotion"
+        component={BatteryChargeRemotion}
+        durationInFrames={120}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={{
+          targetPercentage: 78,
+          label: "CHARGING",
         }}
       />
     </>
