@@ -19,7 +19,6 @@ import {
   GoalEssence, 
   RevealEssence,
   IncomingCallEssence,
-  VoiceMemoEssence,
   BatteryChargeEssence,
   EssenceNoticeCard
 } from "@/components/MotionEssenceCards";
@@ -391,8 +390,7 @@ export default function Home() {
             <GoalEssence delay={0.25} />
             <RevealEssence delay={0.3} />
             <IncomingCallEssence delay={0.35} />
-            <VoiceMemoEssence delay={0.4} />
-            <BatteryChargeEssence delay={0.45} />
+            <BatteryChargeEssence delay={0.4} />
           </div>
 
           <EssenceNoticeCard />

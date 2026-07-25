@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { RotateCcw, Info, Zap } from "lucide-react";
+import { RotateCcw, Info, Zap, Upload } from "lucide-react";
 import LiquidGlassCard from "@/components/LiquidGlassCard";
 import { Player } from "@remotion/player";
 
@@ -13,7 +13,6 @@ import { FollowerRemotion } from "./remotion/FollowerRemotion";
 import { GoalRemotion } from "./remotion/GoalRemotion";
 import { RevealRemotion } from "./remotion/RevealRemotion";
 import { IncomingCallRemotion } from "./remotion/IncomingCallRemotion";
-import { VoiceMemoRemotion } from "./remotion/VoiceMemoRemotion";
 import { BatteryChargeRemotion } from "./remotion/BatteryChargeRemotion";
 
 /* ────────────────────────────────────────────────────────
@@ -446,14 +445,30 @@ export const RevealEssence = ({ delay }: { delay: number }) => {
 };
 
 /* ────────────────────────────────────────────────────────
-   7. Incoming Phone Call Remotion Player
+   7. Incoming Phone Call Remotion Player (Custom Logo Upload Enabled)
    ──────────────────────────────────────────────────────── */
 export const IncomingCallEssence = ({ delay }: { delay: number }) => {
   const [callerName, setCallerName] = useState("Claude Code");
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [showBorder, setShowBorder] = useState(false);
   const [playKey, setPlayKey] = useState(0);
   const [isFin, setIsFin] = useState(false);
   const playerRef = useRef<any>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setAvatarUrl(event.target.result as string);
+          setPlayKey((p) => p + 1);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   useEffect(() => {
     setIsFin(false);
@@ -463,12 +478,12 @@ export const IncomingCallEssence = ({ delay }: { delay: number }) => {
     }
     const t = setTimeout(() => setIsFin(true), 4000);
     return () => clearTimeout(t);
-  }, [playKey, callerName]);
+  }, [playKey, callerName, avatarUrl]);
 
   return (
     <EssenceWrapper
       title="Incoming Phone Call"
-      desc="Liquid glass caller widget with pulsing action buttons"
+      desc="Apple liquid glass caller card with custom logo upload & pulsing buttons"
       delay={delay}
       showBorder={showBorder}
       borderClass="border-4 border-emerald-400 shadow-[0_0_30px_rgba(34,197,94,0.75),inset_0_0_15px_rgba(34,197,94,0.3)]"
@@ -479,7 +494,7 @@ export const IncomingCallEssence = ({ delay }: { delay: number }) => {
         <Player
           ref={playerRef}
           component={IncomingCallRemotion}
-          inputProps={{ callerName, subtitle: "incoming call..." }}
+          inputProps={{ callerName, subtitle: "incoming call...", avatarUrl }}
           durationInFrames={120}
           compositionWidth={1920}
           compositionHeight={1080}
@@ -495,8 +510,18 @@ export const IncomingCallEssence = ({ delay }: { delay: number }) => {
         <div className="flex items-center gap-2">
           <span className="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Caller</span>
           <input type="text" value={callerName} onChange={(e) => setCallerName(e.target.value)}
-            className="bg-black/50 border border-white/20 rounded-md px-2 py-1 text-xs text-center text-white w-28 outline-none focus:border-emerald-400 transition-all font-bold"
+            className="bg-black/50 border border-white/20 rounded-md px-2 py-1 text-xs text-center text-white w-24 outline-none focus:border-emerald-400 transition-all font-bold"
             maxLength={18} />
+          
+          <input type="file" ref={fileInputRef} onChange={handleLogoUpload} accept="image/*" className="hidden" />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-1 bg-white/10 hover:bg-emerald-500/20 border border-white/20 hover:border-emerald-400 text-[10px] font-bold text-white px-2 py-1 rounded transition-all cursor-pointer"
+            title="Upload Custom Logo / Avatar"
+          >
+            <Upload size={12} className="text-emerald-400" />
+            <span>Logo</span>
+          </button>
         </div>
         <label className="flex items-center gap-1.5 cursor-pointer text-[10px] font-bold text-white/80 hover:text-white select-none">
           <input type="checkbox" checked={showBorder} onChange={(e) => setShowBorder(e.target.checked)} className="w-3 h-3 accent-emerald-400 rounded cursor-pointer" />
@@ -508,69 +533,7 @@ export const IncomingCallEssence = ({ delay }: { delay: number }) => {
 };
 
 /* ────────────────────────────────────────────────────────
-   8. Voice Memo Audio Recorder Remotion Player
-   ──────────────────────────────────────────────────────── */
-export const VoiceMemoEssence = ({ delay }: { delay: number }) => {
-  const [title, setTitle] = useState("New Recording 12");
-  const [showBorder, setShowBorder] = useState(false);
-  const [playKey, setPlayKey] = useState(0);
-  const [isFin, setIsFin] = useState(false);
-  const playerRef = useRef<any>(null);
-
-  useEffect(() => {
-    setIsFin(false);
-    if (playerRef.current) {
-      playerRef.current.seekTo(0);
-      playerRef.current.play();
-    }
-    const t = setTimeout(() => setIsFin(true), 4000);
-    return () => clearTimeout(t);
-  }, [playKey, title]);
-
-  return (
-    <EssenceWrapper
-      title="Voice Memo Recorder"
-      desc="iOS spectrum audio waveform with scrubbing playhead"
-      delay={delay}
-      showBorder={showBorder}
-      borderClass="border-4 border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.75),inset_0_0_15px_rgba(239,68,68,0.3)]"
-    >
-      <CenterReplayBtn isFinished={isFin} onReplay={() => setPlayKey(p => p + 1)} />
-
-      <div className="absolute inset-0 w-full h-full bg-black/40">
-        <Player
-          ref={playerRef}
-          component={VoiceMemoRemotion}
-          inputProps={{ title, subtitle: "Voice Memos" }}
-          durationInFrames={120}
-          compositionWidth={1920}
-          compositionHeight={1080}
-          fps={30}
-          style={{ width: "100%", height: "100%" }}
-          controls={false}
-          autoPlay
-          loop={false}
-        />
-      </div>
-
-      <InputWrapper>
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] uppercase tracking-widest text-red-400 font-bold">Title</span>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-            className="bg-black/50 border border-white/20 rounded-md px-2 py-1 text-xs text-center text-white w-28 outline-none focus:border-red-400 transition-all font-bold"
-            maxLength={20} />
-        </div>
-        <label className="flex items-center gap-1.5 cursor-pointer text-[10px] font-bold text-white/80 hover:text-white select-none">
-          <input type="checkbox" checked={showBorder} onChange={(e) => setShowBorder(e.target.checked)} className="w-3 h-3 accent-red-500 rounded cursor-pointer" />
-          <span>Border</span>
-        </label>
-      </InputWrapper>
-    </EssenceWrapper>
-  );
-};
-
-/* ────────────────────────────────────────────────────────
-   9. Battery Charge Circle Remotion Player
+   8. Battery Charge Circle Remotion Player
    ──────────────────────────────────────────────────────── */
 export const BatteryChargeEssence = ({ delay }: { delay: number }) => {
   const [targetPercentage, setTargetPercentage] = useState(78);
@@ -592,7 +555,7 @@ export const BatteryChargeEssence = ({ delay }: { delay: number }) => {
   return (
     <EssenceWrapper
       title="Battery Charging Widget"
-      desc="Dynamic circular percentage ring with lightning bolt pulse"
+      desc="Apple liquid glass circular percentage ring with lightning pulse"
       delay={delay}
       showBorder={showBorder}
       borderClass="border-4 border-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.75),inset_0_0_15px_rgba(245,158,11,0.3)]"
@@ -631,35 +594,19 @@ export const BatteryChargeEssence = ({ delay }: { delay: number }) => {
 };
 
 /* ────────────────────────────────────────────────────────
-   Styled Info Notice Card (Render Lag vs Smooth Export Notice)
+   Short & Punchy Render Notice Badge
    ──────────────────────────────────────────────────────── */
 export const EssenceNoticeCard = () => (
   <motion.div
-    initial={{ opacity: 0, y: 25 }}
+    initial={{ opacity: 0, y: 15 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, amount: 0.1 }}
-    transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-    className="w-full mt-10"
+    transition={{ duration: 0.6, delay: 0.1 }}
+    className="w-full mt-6 flex items-center justify-center"
   >
-    <LiquidGlassCard className="!w-full border border-amber-500/20 bg-gradient-to-r from-amber-500/10 via-black/40 to-amber-500/5 shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-5 sm:p-6 w-full relative z-10">
-        <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-          <Zap size={24} className="animate-pulse" />
-        </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <h4 className="font-display text-base font-extrabold text-white tracking-tight">
-              Render Performance &amp; Video Export Notice
-            </h4>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/30">
-              100% Lag-Free Output
-            </span>
-          </div>
-          <p className="font-body text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-            Live browser previews for motion essences may experience minor stutter or playback lag depending on your local device GPU performance. However, all exported WebM &amp; MP4 videos are compiled frame-by-frame on dedicated canvas workers and are guaranteed to be 100% butter-smooth, crisp, and lag-free.
-          </p>
-        </div>
-      </div>
-    </LiquidGlassCard>
+    <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-black/60 to-amber-500/10 backdrop-blur-md text-amber-300 text-xs sm:text-sm font-bold shadow-xl text-center">
+      <Zap size={16} className="animate-pulse text-amber-400 shrink-0" />
+      <span>⚡ Note: Live previews may stutter slightly on some devices, but all exported WebM &amp; MP4 videos are 100% smooth &amp; lag-free!</span>
+    </div>
   </motion.div>
 );

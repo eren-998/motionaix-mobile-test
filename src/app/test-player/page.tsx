@@ -10,13 +10,12 @@ import { FollowerRemotion } from "@/components/remotion/FollowerRemotion";
 import { GoalRemotion } from "@/components/remotion/GoalRemotion";
 import { RevealRemotion } from "@/components/remotion/RevealRemotion";
 import { IncomingCallRemotion } from "@/components/remotion/IncomingCallRemotion";
-import { VoiceMemoRemotion } from "@/components/remotion/VoiceMemoRemotion";
 import { BatteryChargeRemotion } from "@/components/remotion/BatteryChargeRemotion";
 import * as htmlToImage from "html-to-image";
 import { Muxer, ArrayBufferTarget } from "webm-muxer";
 import { ExportModeContext } from "@/lib/export-context";
 
-type ActiveTab = "fireslider" | "earnings" | "earth" | "download" | "follower" | "goal" | "reveal" | "incomingcall" | "voicememo" | "batterycharge";
+type ActiveTab = "fireslider" | "earnings" | "earth" | "download" | "follower" | "goal" | "reveal" | "incomingcall" | "batterycharge";
 
 /* ── ALWAYS render compositions at 1920x1080 internally.
       Resolution selector only controls the OUTPUT video encoder size.
@@ -51,9 +50,9 @@ export default function TestPlayerPage() {
   // ── Reveal State ──
   const [revealText, setRevealText] = useState<string>("MotionAIx");
 
-  // ── 3 New Motion Essence States ──
+  // ── New Motion Essence States ──
   const [callerName, setCallerName] = useState<string>("Claude Code");
-  const [voiceTitle, setVoiceTitle] = useState<string>("New Recording 12");
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [batteryTarget, setBatteryTarget] = useState<number>(78);
 
   // ── Export Settings ──
@@ -84,8 +83,6 @@ export default function TestPlayerPage() {
         return "border-4 border-purple-500 shadow-[0_0_40px_rgba(168,85,247,0.85),inset_0_0_20px_rgba(168,85,247,0.3)]";
       case "incomingcall":
         return "border-4 border-emerald-400 shadow-[0_0_40px_rgba(34,197,94,0.85),inset_0_0_20px_rgba(34,197,94,0.3)]";
-      case "voicememo":
-        return "border-4 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.85),inset_0_0_20px_rgba(239,68,68,0.3)]";
       case "batterycharge":
         return "border-4 border-amber-400 shadow-[0_0_40px_rgba(245,158,11,0.85),inset_0_0_20px_rgba(245,158,11,0.3)]";
       default:
@@ -143,10 +140,6 @@ export default function TestPlayerPage() {
       case "incomingcall":
         borderColor = "#22c55e";
         glowColor = "rgba(34, 197, 94, 0.8)";
-        break;
-      case "voicememo":
-        borderColor = "#ef4444";
-        glowColor = "rgba(239, 68, 68, 0.8)";
         break;
       case "batterycharge":
         borderColor = "#eab308";
@@ -394,7 +387,6 @@ export default function TestPlayerPage() {
     { id: "goal", label: "🎯 Target Tracker" },
     { id: "reveal", label: "✨ Reveal" },
     { id: "incomingcall", label: "📞 Incoming Call" },
-    { id: "voicememo", label: "🎙️ Voice Memo" },
     { id: "batterycharge", label: "⚡ Battery Charge" },
   ];
 
@@ -427,7 +419,7 @@ export default function TestPlayerPage() {
                   : "text-slate-400 hover:text-white hover:bg-slate-800"
               }`}
               style={activeTab === id ? {
-                backgroundColor: id === "fireslider" ? "#ea580c" : id === "incomingcall" ? "#16a34a" : id === "voicememo" ? "#dc2626" : id === "batterycharge" ? "#d97706" : id === "follower" ? "#ec4899" : id === "goal" ? "#eab308" : "#2563eb",
+                backgroundColor: id === "fireslider" ? "#ea580c" : id === "incomingcall" ? "#16a34a" : id === "batterycharge" ? "#d97706" : id === "follower" ? "#ec4899" : id === "goal" ? "#eab308" : "#2563eb",
                 boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
               } : undefined}
             >
@@ -542,21 +534,7 @@ export default function TestPlayerPage() {
               <Player
                 ref={playerRef}
                 component={IncomingCallRemotion}
-                inputProps={{ callerName, subtitle: "incoming call..." }}
-                durationInFrames={totalFrames}
-                fps={fps}
-                compositionWidth={COMP_WIDTH}
-                compositionHeight={COMP_HEIGHT}
-                style={{ width: "100%", height: "100%" }}
-                controls={!rendering}
-                loop
-              />
-            )}
-            {activeTab === "voicememo" && (
-              <Player
-                ref={playerRef}
-                component={VoiceMemoRemotion}
-                inputProps={{ title: voiceTitle, subtitle: "Voice Memos" }}
+                inputProps={{ callerName, subtitle: "incoming call...", avatarUrl }}
                 durationInFrames={totalFrames}
                 fps={fps}
                 compositionWidth={COMP_WIDTH}
@@ -798,33 +776,38 @@ export default function TestPlayerPage() {
         )}
 
         {activeTab === "incomingcall" && (
-          <div className="bg-slate-950/50 p-6 rounded-2xl border border-slate-800/60">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">Incoming Phone Call Setup</span>
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-bold text-slate-300">Caller Name:</span>
-              <input
-                type="text" value={callerName}
-                onChange={(e) => setCallerName(e.target.value)}
-                disabled={rendering}
-                maxLength={20}
-                className="w-full max-w-[260px] bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white font-bold focus:outline-none focus:border-emerald-400 disabled:opacity-50"
-              />
-            </div>
-          </div>
-        )}
-
-        {activeTab === "voicememo" && (
-          <div className="bg-slate-950/50 p-6 rounded-2xl border border-slate-800/60">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">Voice Memo Recorder Setup</span>
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-bold text-slate-300">Title:</span>
-              <input
-                type="text" value={voiceTitle}
-                onChange={(e) => setVoiceTitle(e.target.value)}
-                disabled={rendering}
-                maxLength={25}
-                className="w-full max-w-[260px] bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white font-bold focus:outline-none focus:border-red-500 disabled:opacity-50"
-              />
+          <div className="bg-slate-950/50 p-6 rounded-2xl border border-slate-800/60 flex flex-col gap-4">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block">Incoming Phone Call Setup</span>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-slate-300">Caller Name:</span>
+                <input
+                  type="text" value={callerName}
+                  onChange={(e) => setCallerName(e.target.value)}
+                  disabled={rendering}
+                  maxLength={20}
+                  className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white font-bold focus:outline-none focus:border-emerald-400 disabled:opacity-50"
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-slate-300">Custom Logo/Avatar:</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        if (ev.target?.result) setAvatarUrl(ev.target.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  disabled={rendering}
+                  className="text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-500/20 file:text-emerald-400 hover:file:bg-emerald-500/30 cursor-pointer"
+                />
+              </div>
             </div>
           </div>
         )}
