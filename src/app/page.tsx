@@ -20,6 +20,7 @@ import {
   RevealEssence,
   IncomingCallEssence,
   BatteryChargeEssence,
+  FolderEssence,
   EssenceNoticeCard
 } from "@/components/MotionEssenceCards";
 
@@ -391,6 +392,7 @@ export default function Home() {
             <RevealEssence delay={0.3} />
             <IncomingCallEssence delay={0.35} />
             <BatteryChargeEssence delay={0.4} />
+            <FolderEssence delay={0.45} />
           </div>
 
           <EssenceNoticeCard />

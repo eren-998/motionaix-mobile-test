@@ -14,6 +14,7 @@ import { GoalRemotion } from "./remotion/GoalRemotion";
 import { RevealRemotion } from "./remotion/RevealRemotion";
 import { IncomingCallRemotion } from "./remotion/IncomingCallRemotion";
 import { BatteryChargeRemotion } from "./remotion/BatteryChargeRemotion";
+import { FolderRemotion } from "./remotion/FolderRemotion";
 
 /* ────────────────────────────────────────────────────────
    Shared Card Wrapper & Tools
@@ -99,7 +100,7 @@ export const EarningsEssence = ({ delay }: { delay: number }) => {
       desc="Liquid glass monetization tracker with falling cash"
       delay={delay}
       showBorder={showBorder}
-      borderClass="border-4 border-emerald-400 shadow-[0_0_30px_rgba(74,222,128,0.75),inset_0_0_15px_rgba(74,222,128,0.3)]"
+      borderClass="border-2 border-emerald-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(74,222,128,0.9),0_0_60px_rgba(74,222,128,0.4)]"
     >
       <CenterReplayBtn isFinished={isFin} onReplay={() => setPlayKey(p => p + 1)} />
 
@@ -160,7 +161,7 @@ export const FileDownloadEssence = ({ delay }: { delay: number }) => {
       desc="Apple liquid glass folder with neon trails"
       delay={delay}
       showBorder={showBorder}
-      borderClass="border-4 border-sky-400 shadow-[0_0_30px_rgba(56,189,248,0.75),inset_0_0_15px_rgba(56,189,248,0.3)]"
+      borderClass="border-2 border-sky-300 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(56,189,248,0.9),0_0_60px_rgba(56,189,248,0.4)]"
     >
       <CenterReplayBtn isFinished={isFin} onReplay={() => setPlayKey(p => p + 1)} />
 
@@ -224,7 +225,7 @@ export const FireSliderEssence = ({ delay }: { delay: number }) => {
       desc="Heat/Cold tracker with physics-based particles"
       delay={delay}
       showBorder={showBorder}
-      borderClass={isFire ? "border-4 border-orange-500 shadow-[0_0_30px_rgba(249,115,22,0.75),inset_0_0_15px_rgba(249,115,22,0.3)]" : "border-4 border-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.75),inset_0_0_15px_rgba(34,211,238,0.3)]"}
+      borderClass={isFire ? "border-2 border-orange-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(249,115,22,0.9),0_0_60px_rgba(249,115,22,0.4)]" : "border-2 border-cyan-300 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(34,211,238,0.9),0_0_60px_rgba(34,211,238,0.4)]"}
     >
       <CenterReplayBtn isFinished={isFin} onReplay={() => setPlayKey(p => p + 1)} />
 
@@ -286,7 +287,7 @@ export const FollowerEssence = ({ delay }: { delay: number }) => {
       desc="Real rolling odometer with liquid glass card"
       delay={delay}
       showBorder={showBorder}
-      borderClass="border-4 border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.75),inset_0_0_15px_rgba(236,72,153,0.3)]"
+      borderClass="border-2 border-pink-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(236,72,153,0.9),0_0_60px_rgba(236,72,153,0.4)]"
     >
       <CenterReplayBtn isFinished={isFin} onReplay={() => setPlayKey(p => p + 1)} />
 
@@ -347,7 +348,7 @@ export const GoalEssence = ({ delay }: { delay: number }) => {
       desc="Premium glowing goal marker and dynamic track"
       delay={delay}
       showBorder={showBorder}
-      borderClass="border-4 border-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.75),inset_0_0_15px_rgba(245,158,11,0.3)]"
+      borderClass="border-2 border-amber-300 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(245,158,11,0.9),0_0_60px_rgba(245,158,11,0.4)]"
     >
       <CenterReplayBtn isFinished={isFin} onReplay={() => setPlayKey(p => p + 1)} />
 
@@ -408,7 +409,7 @@ export const RevealEssence = ({ delay }: { delay: number }) => {
       desc="Buttery smooth blur mask with light sweep"
       delay={delay}
       showBorder={showBorder}
-      borderClass="border-4 border-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.75),inset_0_0_15px_rgba(168,85,247,0.3)]"
+      borderClass="border-2 border-purple-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(168,85,247,0.9),0_0_60px_rgba(168,85,247,0.4)]"
     >
       <CenterReplayBtn isFinished={isFin} onReplay={() => setPlayKey(p => p + 1)} />
 
@@ -486,7 +487,7 @@ export const IncomingCallEssence = ({ delay }: { delay: number }) => {
       desc="Apple liquid glass caller card with custom logo upload & pulsing buttons"
       delay={delay}
       showBorder={showBorder}
-      borderClass="border-4 border-emerald-400 shadow-[0_0_30px_rgba(34,197,94,0.75),inset_0_0_15px_rgba(34,197,94,0.3)]"
+      borderClass="border-2 border-emerald-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(34,197,94,0.9),0_0_60px_rgba(34,197,94,0.4)]"
     >
       <CenterReplayBtn isFinished={isFin} onReplay={() => setPlayKey(p => p + 1)} />
 
@@ -558,7 +559,7 @@ export const BatteryChargeEssence = ({ delay }: { delay: number }) => {
       desc="Apple liquid glass circular percentage ring with lightning pulse"
       delay={delay}
       showBorder={showBorder}
-      borderClass="border-4 border-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.75),inset_0_0_15px_rgba(245,158,11,0.3)]"
+      borderClass="border-2 border-amber-300 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(245,158,11,0.9),0_0_60px_rgba(245,158,11,0.4)]"
     >
       <CenterReplayBtn isFinished={isFin} onReplay={() => setPlayKey(p => p + 1)} />
 
@@ -586,6 +587,76 @@ export const BatteryChargeEssence = ({ delay }: { delay: number }) => {
         </div>
         <label className="flex items-center gap-1.5 cursor-pointer text-[10px] font-bold text-white/80 hover:text-white select-none">
           <input type="checkbox" checked={showBorder} onChange={(e) => setShowBorder(e.target.checked)} className="w-3 h-3 accent-amber-400 rounded cursor-pointer" />
+          <span>Border</span>
+        </label>
+      </InputWrapper>
+    </EssenceWrapper>
+  );
+};
+
+/* ────────────────────────────────────────────────────────
+   9. Folder Motion Remotion Player
+   ──────────────────────────────────────────────────────── */
+export const FolderEssence = ({ delay }: { delay: number }) => {
+  const [folderTitle, setFolderTitle] = useState("Projects");
+  const [filesCount, setFilesCount] = useState("318 Files");
+  const [showBorder, setShowBorder] = useState(false);
+  const [playKey, setPlayKey] = useState(0);
+  const [isFin, setIsFin] = useState(false);
+  const playerRef = useRef<any>(null);
+
+  useEffect(() => {
+    setIsFin(false);
+    if (playerRef.current) {
+      playerRef.current.seekTo(0);
+      playerRef.current.play();
+    }
+    const t = setTimeout(() => setIsFin(true), 4000);
+    return () => clearTimeout(t);
+  }, [playKey, folderTitle, filesCount]);
+
+  return (
+    <EssenceWrapper
+      title="3D Folder Motion"
+      desc="Purple liquid glass folder with 3 emerging fan-out file cards"
+      delay={delay}
+      showBorder={showBorder}
+      borderClass="border-2 border-violet-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(139,92,246,0.9),0_0_60px_rgba(139,92,246,0.4)]"
+    >
+      <CenterReplayBtn isFinished={isFin} onReplay={() => setPlayKey(p => p + 1)} />
+
+      <div className="absolute inset-0 w-full h-full bg-black/40">
+        <Player
+          ref={playerRef}
+          component={FolderRemotion}
+          inputProps={{
+            folderTitle,
+            filesCount,
+            lastUpdated: "Last added time Oct 13, 2025",
+            card1Title: "ui_mockup.png",
+            card2Title: "hero_render.mp4",
+            card3Title: "analytics.json",
+          }}
+          durationInFrames={120}
+          compositionWidth={1920}
+          compositionHeight={1080}
+          fps={30}
+          style={{ width: "100%", height: "100%" }}
+          controls={false}
+          autoPlay
+          loop={false}
+        />
+      </div>
+
+      <InputWrapper>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] uppercase tracking-widest text-violet-400 font-bold">Folder</span>
+          <input type="text" value={folderTitle} onChange={(e) => setFolderTitle(e.target.value)}
+            className="bg-black/50 border border-white/20 rounded-md px-2 py-1 text-xs text-center text-white w-24 outline-none focus:border-violet-400 transition-all font-bold"
+            maxLength={18} />
+        </div>
+        <label className="flex items-center gap-1.5 cursor-pointer text-[10px] font-bold text-white/80 hover:text-white select-none">
+          <input type="checkbox" checked={showBorder} onChange={(e) => setShowBorder(e.target.checked)} className="w-3 h-3 accent-violet-400 rounded cursor-pointer" />
           <span>Border</span>
         </label>
       </InputWrapper>

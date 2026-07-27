@@ -14,9 +14,27 @@ import { RevealRemotion } from "../components/remotion/RevealRemotion";
 import { IncomingCallRemotion } from "../components/remotion/IncomingCallRemotion";
 import { BatteryChargeRemotion } from "../components/remotion/BatteryChargeRemotion";
 
+import { FolderRemotion } from "../components/remotion/FolderRemotion";
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="FolderRemotion"
+        component={FolderRemotion}
+        durationInFrames={120}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={{
+          folderTitle: "Projects",
+          filesCount: "318 Files",
+          lastUpdated: "Last added time Oct 13, 2025",
+          card1Title: "ui_mockup.png",
+          card2Title: "hero_render.mp4",
+          card3Title: "analytics.json",
+        }}
+      />
       <Composition
         id="FireSliderRemotion"
         component={FireSliderRemotion}

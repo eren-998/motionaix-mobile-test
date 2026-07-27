@@ -11,11 +11,12 @@ import { GoalRemotion } from "@/components/remotion/GoalRemotion";
 import { RevealRemotion } from "@/components/remotion/RevealRemotion";
 import { IncomingCallRemotion } from "@/components/remotion/IncomingCallRemotion";
 import { BatteryChargeRemotion } from "@/components/remotion/BatteryChargeRemotion";
+import { FolderRemotion } from "@/components/remotion/FolderRemotion";
 import * as htmlToImage from "html-to-image";
 import { Muxer, ArrayBufferTarget } from "webm-muxer";
 import { ExportModeContext } from "@/lib/export-context";
 
-type ActiveTab = "fireslider" | "earnings" | "earth" | "download" | "follower" | "goal" | "reveal" | "incomingcall" | "batterycharge";
+type ActiveTab = "fireslider" | "earnings" | "earth" | "download" | "follower" | "goal" | "reveal" | "incomingcall" | "batterycharge" | "folder";
 
 /* ── ALWAYS render compositions at 1920x1080 internally.
       Resolution selector only controls the OUTPUT video encoder size.
@@ -54,6 +55,8 @@ export default function TestPlayerPage() {
   const [callerName, setCallerName] = useState<string>("Claude Code");
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [batteryTarget, setBatteryTarget] = useState<number>(78);
+  const [folderTitle, setFolderTitle] = useState<string>("Projects");
+  const [filesCount, setFilesCount] = useState<string>("318 Files");
 
   // ── Export Settings ──
   const [durationSec, setDurationSec] = useState<number>(4);
@@ -61,36 +64,38 @@ export default function TestPlayerPage() {
   const [resolution, setResolution] = useState<string>("1080p");
   const [showBorder, setShowBorder] = useState<boolean>(false);
 
-  // Dynamic theme-matching border outline class for UI
+  // Dynamic theme-matching border outline class for UI (After Effects Volumetric Layered Outlines)
   const getThemeBorderClass = (tab: ActiveTab, mode: "fire" | "cold") => {
     if (!showBorder) return "border border-slate-700 shadow-2xl";
     switch (tab) {
       case "fireslider":
         return mode === "fire"
-          ? "border-4 border-orange-500 shadow-[0_0_40px_rgba(249,115,22,0.85),inset_0_0_20px_rgba(249,115,22,0.3)]"
-          : "border-4 border-cyan-400 shadow-[0_0_40px_rgba(34,211,238,0.85),inset_0_0_20px_rgba(34,211,238,0.3)]";
+          ? "border-2 border-orange-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(249,115,22,0.9),0_0_60px_rgba(249,115,22,0.4),0_0_100px_rgba(249,115,22,0.2)]"
+          : "border-2 border-cyan-300 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(34,211,238,0.9),0_0_60px_rgba(34,211,238,0.4),0_0_100px_rgba(34,211,238,0.2)]";
       case "earnings":
-        return "border-4 border-emerald-400 shadow-[0_0_40px_rgba(74,222,128,0.85),inset_0_0_20px_rgba(74,222,128,0.3)]";
+        return "border-2 border-emerald-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(74,222,128,0.9),0_0_60px_rgba(74,222,128,0.4),0_0_100px_rgba(74,222,128,0.2)]";
       case "earth":
-        return "border-4 border-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.85),inset_0_0_20px_rgba(59,130,246,0.3)]";
+        return "border-2 border-blue-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(59,130,246,0.9),0_0_60px_rgba(59,130,246,0.4),0_0_100px_rgba(59,130,246,0.2)]";
       case "download":
-        return "border-4 border-sky-400 shadow-[0_0_40px_rgba(56,189,248,0.85),inset_0_0_20px_rgba(56,189,248,0.3)]";
+        return "border-2 border-sky-300 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(56,189,248,0.9),0_0_60px_rgba(56,189,248,0.4),0_0_100px_rgba(56,189,248,0.2)]";
       case "follower":
-        return "border-4 border-pink-500 shadow-[0_0_40px_rgba(236,72,153,0.85),inset_0_0_20px_rgba(236,72,153,0.3)]";
+        return "border-2 border-pink-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(236,72,153,0.9),0_0_60px_rgba(236,72,153,0.4),0_0_100px_rgba(236,72,153,0.2)]";
       case "goal":
-        return "border-4 border-amber-400 shadow-[0_0_40px_rgba(245,158,11,0.85),inset_0_0_20px_rgba(245,158,11,0.3)]";
+        return "border-2 border-amber-300 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(245,158,11,0.9),0_0_60px_rgba(245,158,11,0.4),0_0_100px_rgba(245,158,11,0.2)]";
       case "reveal":
-        return "border-4 border-purple-500 shadow-[0_0_40px_rgba(168,85,247,0.85),inset_0_0_20px_rgba(168,85,247,0.3)]";
+        return "border-2 border-purple-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(168,85,247,0.9),0_0_60px_rgba(168,85,247,0.4),0_0_100px_rgba(168,85,247,0.2)]";
       case "incomingcall":
-        return "border-4 border-emerald-400 shadow-[0_0_40px_rgba(34,197,94,0.85),inset_0_0_20px_rgba(34,197,94,0.3)]";
+        return "border-2 border-emerald-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(34,197,94,0.9),0_0_60px_rgba(34,197,94,0.4),0_0_100px_rgba(34,197,94,0.2)]";
       case "batterycharge":
-        return "border-4 border-amber-400 shadow-[0_0_40px_rgba(245,158,11,0.85),inset_0_0_20px_rgba(245,158,11,0.3)]";
+        return "border-2 border-amber-300 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(245,158,11,0.9),0_0_60px_rgba(245,158,11,0.4),0_0_100px_rgba(245,158,11,0.2)]";
+      case "folder":
+        return "border-2 border-violet-400 ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(139,92,246,0.9),0_0_60px_rgba(139,92,246,0.4),0_0_100px_rgba(139,92,246,0.2)]";
       default:
-        return "border-4 border-white shadow-[0_0_40px_rgba(255,255,255,0.6)]";
+        return "border-2 border-white ring-2 ring-white/60 shadow-[0_0_0_1.5px_rgba(255,255,255,0.7)_inset,0_0_30px_rgba(255,255,255,0.8)]";
     }
   };
 
-  // Burn theme-matching border directly onto export canvas frames
+  // Burn After Effects Volumetric Layered Outlines directly onto video export canvas frames
   const drawBorderOnCanvas = (
     c: CanvasRenderingContext2D,
     w: number,
@@ -101,49 +106,53 @@ export default function TestPlayerPage() {
     if (!showBorder) return;
 
     let borderColor = "#ffffff";
-    let glowColor = "rgba(255, 255, 255, 0.6)";
+    let glowColor = "rgba(255, 255, 255, 0.8)";
 
     switch (tab) {
       case "fireslider":
         if (mode === "fire") {
           borderColor = "#f97316";
-          glowColor = "rgba(249, 115, 22, 0.8)";
+          glowColor = "rgba(249, 115, 22, 0.85)";
         } else {
           borderColor = "#22d3ee";
-          glowColor = "rgba(34, 211, 238, 0.8)";
+          glowColor = "rgba(34, 211, 238, 0.85)";
         }
         break;
       case "earnings":
         borderColor = "#4ade80";
-        glowColor = "rgba(74, 222, 128, 0.8)";
+        glowColor = "rgba(74, 222, 128, 0.85)";
         break;
       case "earth":
         borderColor = "#3b82f6";
-        glowColor = "rgba(59, 130, 246, 0.8)";
+        glowColor = "rgba(59, 130, 246, 0.85)";
         break;
       case "download":
         borderColor = "#38bdf8";
-        glowColor = "rgba(56, 189, 248, 0.8)";
+        glowColor = "rgba(56, 189, 248, 0.85)";
         break;
       case "follower":
         borderColor = "#ec4899";
-        glowColor = "rgba(236, 72, 153, 0.8)";
+        glowColor = "rgba(236, 72, 153, 0.85)";
         break;
       case "goal":
         borderColor = "#eab308";
-        glowColor = "rgba(234, 179, 8, 0.8)";
+        glowColor = "rgba(234, 179, 8, 0.85)";
         break;
       case "reveal":
         borderColor = "#a855f7";
-        glowColor = "rgba(168, 85, 247, 0.8)";
+        glowColor = "rgba(168, 85, 247, 0.85)";
         break;
       case "incomingcall":
         borderColor = "#22c55e";
-        glowColor = "rgba(34, 197, 94, 0.8)";
+        glowColor = "rgba(34, 197, 94, 0.85)";
         break;
       case "batterycharge":
         borderColor = "#eab308";
-        glowColor = "rgba(234, 179, 8, 0.8)";
+        glowColor = "rgba(234, 179, 8, 0.85)";
+        break;
+      case "folder":
+        borderColor = "#8b5cf6";
+        glowColor = "rgba(139, 92, 246, 0.85)";
         break;
     }
 
@@ -151,15 +160,41 @@ export default function TestPlayerPage() {
     const halfStroke = strokeWidth / 2;
 
     c.save();
+
+    // ── Layer 1: Outer Soft Neon Volumetric Aura ──
     c.shadowColor = glowColor;
-    c.shadowBlur = strokeWidth * 2;
+    c.shadowBlur = strokeWidth * 4;
     c.strokeStyle = borderColor;
+    c.globalAlpha = 0.45;
+    c.lineWidth = strokeWidth * 1.6;
+    c.strokeRect(halfStroke, halfStroke, w - strokeWidth, h - strokeWidth);
+
+    // ── Layer 2: Core Volumetric 3D Stroke ──
+    c.globalAlpha = 0.95;
+    c.shadowBlur = strokeWidth * 1.8;
     c.lineWidth = strokeWidth;
-
     c.strokeRect(halfStroke, halfStroke, w - strokeWidth, h - strokeWidth);
 
-    c.shadowBlur = strokeWidth;
-    c.strokeRect(halfStroke, halfStroke, w - strokeWidth, h - strokeWidth);
+    // ── Layer 3: Inner Sharp Specular Core Highlight Line ──
+    c.globalAlpha = 0.85;
+    c.shadowBlur = 0;
+    c.strokeStyle = "#FFFFFF";
+    c.lineWidth = Math.max(2.5, Math.round(strokeWidth * 0.22));
+    const inset = strokeWidth * 0.4;
+    c.strokeRect(inset, inset, w - inset * 2, h - inset * 2);
+
+    // ── Layer 4: Top Specular Corner Light Sheen Beam ──
+    const grad = c.createLinearGradient(0, 0, w, 0);
+    grad.addColorStop(0, "rgba(255, 255, 255, 0.15)");
+    grad.addColorStop(0.3, "rgba(255, 255, 255, 0.95)");
+    grad.addColorStop(0.7, "rgba(255, 255, 255, 0.95)");
+    grad.addColorStop(1, "rgba(255, 255, 255, 0.15)");
+    c.strokeStyle = grad;
+    c.lineWidth = Math.max(3, Math.round(strokeWidth * 0.3));
+    c.beginPath();
+    c.moveTo(0, inset);
+    c.lineTo(w, inset);
+    c.stroke();
 
     c.restore();
   };
@@ -388,6 +423,7 @@ export default function TestPlayerPage() {
     { id: "reveal", label: "✨ Reveal" },
     { id: "incomingcall", label: "📞 Incoming Call" },
     { id: "batterycharge", label: "⚡ Battery Charge" },
+    { id: "folder", label: "📁 3D Folder" },
   ];
 
   return (
@@ -419,7 +455,7 @@ export default function TestPlayerPage() {
                   : "text-slate-400 hover:text-white hover:bg-slate-800"
               }`}
               style={activeTab === id ? {
-                backgroundColor: id === "fireslider" ? "#ea580c" : id === "incomingcall" ? "#16a34a" : id === "batterycharge" ? "#d97706" : id === "follower" ? "#ec4899" : id === "goal" ? "#eab308" : "#2563eb",
+                backgroundColor: id === "fireslider" ? "#ea580c" : id === "incomingcall" ? "#16a34a" : id === "batterycharge" ? "#d97706" : id === "folder" ? "#8b5cf6" : id === "follower" ? "#ec4899" : id === "goal" ? "#eab308" : "#2563eb",
                 boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
               } : undefined}
             >
@@ -549,6 +585,27 @@ export default function TestPlayerPage() {
                 ref={playerRef}
                 component={BatteryChargeRemotion}
                 inputProps={{ targetPercentage: batteryTarget, label: "CHARGING" }}
+                durationInFrames={totalFrames}
+                fps={fps}
+                compositionWidth={COMP_WIDTH}
+                compositionHeight={COMP_HEIGHT}
+                style={{ width: "100%", height: "100%" }}
+                controls={!rendering}
+                loop
+              />
+            )}
+            {activeTab === "folder" && (
+              <Player
+                ref={playerRef}
+                component={FolderRemotion}
+                inputProps={{
+                  folderTitle,
+                  filesCount,
+                  lastUpdated: "Last added time Oct 13, 2025",
+                  card1Title: "ui_mockup.png",
+                  card2Title: "hero_render.mp4",
+                  card3Title: "analytics.json",
+                }}
                 durationInFrames={totalFrames}
                 fps={fps}
                 compositionWidth={COMP_WIDTH}
@@ -824,6 +881,34 @@ export default function TestPlayerPage() {
                 className="w-48 h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-400"
               />
               <span className="text-sm font-extrabold text-amber-400">{batteryTarget}%</span>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "folder" && (
+          <div className="bg-slate-950/50 p-6 rounded-2xl border border-slate-800/60 flex flex-col gap-4">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block">3D Folder Setup</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-slate-300">Folder Title:</span>
+                <input
+                  type="text" value={folderTitle}
+                  onChange={(e) => setFolderTitle(e.target.value)}
+                  disabled={rendering}
+                  maxLength={20}
+                  className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white font-bold focus:outline-none focus:border-violet-400 disabled:opacity-50"
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-slate-300">Files Count:</span>
+                <input
+                  type="text" value={filesCount}
+                  onChange={(e) => setFilesCount(e.target.value)}
+                  disabled={rendering}
+                  maxLength={15}
+                  className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white font-bold focus:outline-none focus:border-violet-400 disabled:opacity-50"
+                />
+              </div>
             </div>
           </div>
         )}
