@@ -396,6 +396,26 @@ export default function Home() {
           </div>
 
           <EssenceNoticeCard />
+
+          {/* ── Bold "And more, much more..." Motion Essence CTA Link ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="w-full mt-10 flex flex-col items-center justify-center text-center"
+          >
+            <Link
+              href="/motion-essence"
+              className="group relative inline-flex items-center gap-3 px-8 py-4 sm:px-10 sm:py-5 rounded-full bg-gradient-to-r from-primary-container via-[#FFE066] to-primary-container text-on-primary-container font-display text-xl sm:text-2xl font-black uppercase tracking-wider shadow-[0_0_35px_rgba(255,209,0,0.3)] hover:shadow-[0_0_55px_rgba(255,209,0,0.55)] hover:scale-[1.03] active:scale-95 transition-all duration-300 border border-white/40"
+            >
+              <span>And more, much more...</span>
+              <span className="text-xl sm:text-2xl group-hover:translate-x-1.5 transition-transform duration-300">➔</span>
+            </Link>
+            <p className="font-body text-xs sm:text-sm text-on-surface-variant/80 mt-3 font-semibold tracking-wide">
+              Explore the complete Motion Essence collection &amp; premium animation toolkits
+            </p>
+          </motion.div>
         </div>
       </section>
 
